@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
 
     <style>
-        /* 核心布局：允许长网页自然滚动 */
+        /* 核心布局：允许页面自然滚动 */
         body {
             margin: 0;
             padding: 0;
@@ -80,6 +80,40 @@
             font-size: 14px;
             line-height: 1.6;
             color: #444;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 💡 纯本地时光进度条的精美 CSS 样式 */
+        .progress-wrapper {
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .progress-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        progress {
+            width: 100%;
+            height: 10px;
+            display: block;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        progress::-webkit-progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+        progress::-webkit-progress-value {
+            background-color: #333; /* 酷炫黑灰进度条 */
+            border-radius: 5px;
         }
 
         /* 留言板区域 */
@@ -139,8 +173,25 @@
         
         <div class="sections-container">
             <div class="section-box">
-                <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大一新生。</p>
+                <div>
+                    <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大一新生。</p>
+                </div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-title">
+                        <span>⏳ 2026 年已逝去</span>
+                        <span id="year-percent">0.00%</span>
+                    </div>
+                    <progress id="year-progress" value="0" max="100"></progress>
+                    
+                    <div class="progress-title" style="margin-top: 10px;">
+                        <span>🎓 大一生活已度过</span>
+                        <span id="term-percent">0.00%</span>
+                    </div>
+                    <progress id="term-progress" value="0" max="100"></progress>
+                </div>
             </div>
+
             <div class="section-box">
                 <p style="margin: 0;">学习过 C，Java 等语言，最近在学 HTML，Python。未来还计划学习 C++ 和 Agent 方面的知识。</p>
             </div>
@@ -190,19 +241,45 @@
                 cover: 'album.png'  
             }]
         });
-
         ap.volume(0.2, true);
 
         // 弹窗与音乐联动
         const btn = document.getElementById('entry-btn');
         const modal = document.getElementById('welcome-modal');
-        
         if (btn && modal) {
             btn.addEventListener('click', function() {
                 ap.play();
                 modal.style.display = 'none'; 
             });
         }
+
+        // 💡 纯本地硬核计算逻辑：用毫秒计算精确的时间流逝
+        function updateProgress() {
+            const now = new Date();
+            
+            // 1. 计算 2026 全年进度
+            const startOfYear = new Date('2026-01-01T00:00:00');
+            const endOfYear = new Date('2027-01-01T00:00:00');
+            const yearPassed = ((now - startOfYear) / (endOfYear - startOfYear)) * 100;
+            
+            // 2. 计算大一学年进度（假设大一从 2025 年 9 月 1 日到 2026 年 7 月 1 日左右结束）
+            const startOfTerm = new Date('2025-09-01T00:00:00');
+            const endOfTerm = new Date('2026-07-01T00:00:00');
+            let termPassed = ((now - startOfTerm) / (endOfTerm - startOfTerm)) * 100;
+            if (termPassed > 100) termPassed = 100; // 封顶 100%
+            if (termPassed < 0) termPassed = 0;
+
+            // 将计算结果塞给 HTML 组件渲染
+            document.getElementById('year-progress').value = yearPassed;
+            document.getElementById('year-percent').innerText = yearPassed.toFixed(2) + '%';
+            
+            document.getElementById('term-progress').value = termPassed;
+            document.getElementById('term-percent').innerText = termPassed.toFixed(2) + '%';
+        }
+
+        // 进网页立刻执行一次，随后每小时刷新一次即可（极其省电、省内存）
+        updateProgress();
+        setInterval(updateProgress, 3600000);
     </script>
 </body>
 </html>
