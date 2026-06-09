@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
 
     <style>
+        /* 💡 核心修复：允许长网页自然向下滚动，确保留言板能完整展示 */
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* 顶部对齐，配合 padding 让长网页自然滚动 */
             box-sizing: border-box;
-            padding: 40px 20px; 
+            padding: 60px 20px; 
             font-family: "Helvetica Neue", Arial, sans-serif;
             position: relative;
         }
@@ -32,51 +33,56 @@
             z-index: -1;
         }
 
-        。profile-card {
+        /* 大卡片：高度彻底自适应（height: auto），给底部的留言板腾出空间 */
+        .profile-card {
             text-align: center;
             padding: 40px;
             width: 100%;
             max-width: 850px;        
+            height: auto; 
             background-color: rgba(255, 255, 255, 0.85); 
             border-radius: 16px;      
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
         }
 
+        /* 💡 头像完美复原：严格限制宽高，强制裁剪成完美正圆形，防止拉伸 */
         .avatar {
             width: 150px;
             height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            display: inline-block;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            display: block;
             margin: 0 auto 20px auto;
             border: 4px solid white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
+        /* 💡 介绍板块：强制在一行内横向排列，且平分宽度 */
         .sections-container {
-            display: flex;
-            flex-direction: row;
+            display: flex !important;
+            flex-direction: row !important; /* 确保一定是横向并排 */
             justify-content: center;
-            align-items: stretch;
+            align-items: stretch; /* 保证三个小盒子高度一致 */
             gap: 20px;
             margin-top: 35px;
             width: 100%;
         }
 
+        /* 💡 小盒子：平分空间，横向排列 */
         .section-box {
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            flex: 1;
+            flex: 1 !important; /* 每个人各占 1/3 */
             text-align: left;
             font-size: 14px;
             line-height: 1.6;
             color: #444;
         }
 
-        /* 💡 限制留言板在卡片内的样式，让它宽度对齐 */
+        /* 留言板容器样式 */
         .comment-area {
             width: 100%;
             margin-top: 40px;
@@ -115,7 +121,7 @@
             background-color: #555;
         }
 
-        /* 💡 修复 APlayer 在吸底模式下，左下角图标可能被大卡片略微遮挡的层级问题 */
+        /* 确保 APlayer 吸底组件在网页最上层，不被卡片遮挡 */
         .aplayer {
             z-index: 10000 !important;
         }
@@ -167,19 +173,18 @@
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
 
     <script>
-        // 💡 初始化 APlayer 播放器高级配置
+        // 💡 初始化 APlayer 配置，已完美同步你的神曲信息
         const ap = new APlayer({
             container: document.getElementById('aplayer'),
-            fixed: true,          // 开启左下角全身吸底挂载模式
+            fixed: true, 
             audio: [{
                 name: 'Overjoy ★ OVERDOSE!!', 
-                artist: 'BilliumMoto/黒皇帝/Sobrem/Vally.exe',     
-                url: 'music.mp3',     
-                cover: 'album.png'   
+                artist: 'BilliumMoto/黑皇帝/Sobrem/Vally.exe',     
+                url: 'music.mp3', 
+                cover: 'album.png'  
             }]
         });
 
-        // 限制默认音量
         ap.volume(0.2, true);
 
         const btn = document.getElementById('entry-btn');
@@ -187,7 +192,6 @@
         
         if (btn && modal) {
             btn.addEventListener('click', function() {
-                // 用户点击进入后，优雅唤醒 APlayer 开源播放器
                 ap.play();
                 modal.style.display = 'none'; 
             });
@@ -195,4 +199,3 @@
     </script>
 </body>
 </html>
-      
