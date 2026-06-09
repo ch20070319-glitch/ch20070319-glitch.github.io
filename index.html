@@ -59,7 +59,7 @@
         }
 
         /* 💡 介绍板块：强制在一行内横向排列，且平分宽度 */
-        .sections-container {
+        。sections-container {
             display: flex !important;
             flex-direction: row !important; /* 确保一定是横向并排 */
             justify-content: center;
@@ -83,7 +83,7 @@
         }
 
         /* 留言板容器样式 */
-        .comment-area {
+        。comment-area {
             width: 100%;
             margin-top: 40px;
             text-align: left;
@@ -158,7 +158,7 @@
                     async>
             </script>
         </div>
-    </div>
+    </div><div id="live2d-toggle"></div>
 
     <div id="welcome-modal" class="modal-overlay">
         <div class="modal-box">
@@ -169,6 +169,8 @@
     </div>
 
     <div id="aplayer"></div>
+
+    <div id="welcome-modal" class="modal-overlay">
 
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
 
@@ -196,6 +198,29 @@
                 modal.style.display = 'none'; 
             });
         }
+    </script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/safari-zone-widget/autoload.js"></script>
+
+    <script>
+        window.addEventListener('load', () => {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                #waifu-tips {
+                    font-family: "Helvetica Neue", Arial, sans-serif !important;
+                    background-color: rgba(255, 255, 255, 0.9) !important;
+                    border-radius: 8px !important;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+                }
+                #waifu {
+                    right: 30px !important;
+                    left: auto !important;
+                    bottom: 0 !important;
+                    z-index: 9999 !important;
+                }
+            `;
+            document.head.appendChild(style);
+        });
     </script>
 </body>
 </html>
