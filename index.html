@@ -31,7 +31,7 @@
         }
 
         /* 💡 大卡片：增加宽度自适应，内部全部居中 */
-        .profile-card {
+        。profile-card {
             text-align: center;
             padding: 40px;
             width: 100%;
@@ -122,6 +122,7 @@
             background-color: #555;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
 </head>
 <body>
 
@@ -151,27 +152,32 @@
         </div>
     </div>
 
-    <div class="music-player-container">
-        <audio id="bg-music" src="music.mp3" controls loop></audio>
-    </div>
-
+   <div id="aplayer">
+    <audio id="bg-music" src="music.mp3" controls loop></audio>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
     <script>
-        const audio = document.getElementById('bg-music');
-        const modal = document.getElementById('welcome-modal');
-        const btn = document.getElementById('entry-btn');
+       const ap = new APlayer({
+        container: document.getElementById('aplayer'),
+        fixed: true,          // 💡 开启吸底模式，让它永远优雅地贴在网页最左下角
+        audio: [{
+            name: '你的歌曲名字',       // 填入歌曲名
+            artist: '歌手名',          // 填入歌手名
+            url: 'music.mp3',         // 💡 指向你仓库里上传的 music.mp3 文件
+            cover: 'avatar.png'       // 💡 播放器左下角的小封面，直接用你的头像
+        }]
+    });
 
-        if (audio) {
-            audio.volume = 0.2;
-        }
-
-        if (btn && modal && audio) {
-            btn.addEventListener('click', function() {
-                audio.play().catch(function(error) {
-                    console.log("自动播放拦截:", error);
-                });
-                modal.style.display = 'none'; 
-            });
-        }
+    // 💡 联动昨天的弹窗逻辑：当用户点击“进入网站”按钮时，音乐自动响起
+    const btn = document.getElementById('entry-btn');
+    const modal = document.getElementById('welcome-modal');
+    
+    if (btn && modal) {
+        btn.addEventListener('click', function() {
+            ap.play(); // 唤醒 APlayer 播放
+            modal.style.display = 'none'; // 隐藏弹窗
+        });
+    }
     </script>
 </body>
 </html>
