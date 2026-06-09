@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
 
     <style>
-        /* 页面整体布局 */
+        /* 核心布局：允许长网页自然滚动 */
         body {
             margin: 0;
             padding: 0;
@@ -46,7 +46,7 @@
             box-sizing: border-box;
         }
 
-        /* 头像 */
+        /* 头像强制正圆 */
         .avatar {
             width: 150px;
             height: 150px;
@@ -58,7 +58,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        /* 介绍板块横向并排 */
+        /* 介绍板块横向并排且等宽 */
         .sections-container {
             display: flex !important;
             flex-direction: row !important; 
@@ -69,6 +69,7 @@
             width: 100%;
         }
 
+        /* 小盒子 */
         .section-box {
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
@@ -81,14 +82,14 @@
             color: #444;
         }
 
-        /* 留言板 */
+        /* 留言板区域 */
         .comment-area {
             width: 100%;
             margin-top: 40px;
             text-align: left;
         }
 
-        /* 弹窗遮罩层：确保层级最高，但绝不干扰底层 */
+        /* 弹窗遮罩 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -96,15 +97,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 999999 !important; 
+            z-index: 99998 !important; 
         }
 
+        /* 弹窗内容 */
         .modal-box {
             background-color: white;
             padding: 30px;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 99999 !important;
         }
 
         #entry-btn {
@@ -116,13 +119,12 @@
             border-radius: 6px;
             cursor: pointer;
             margin-top: 15px;
-            position: relative;
-            z-index: 1000000 !important; /* 确保按钮在最最最前面 */
         }
         #entry-btn:hover {
             background-color: #555;
         }
 
+        /* 播放器吸底层级 */
         .aplayer {
             z-index: 10000 !important;
         }
@@ -164,8 +166,6 @@
         </div>
     </div>
 
-    <div id="live2d-toggle"></div>
-
     <div id="welcome-modal" class="modal-overlay">
         <div class="modal-box">
             <h2>欢迎来到 hot chocolate 的个人网站</h2>
@@ -177,10 +177,9 @@
     <div id="aplayer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
 
     <script>
-        // 1. 优先无条件初始化播放器
+        // 初始化播放器配置
         const ap = new APlayer({
             container: document.getElementById('aplayer'),
             fixed: true, 
@@ -191,43 +190,19 @@
                 cover: 'album.png'  
             }]
         });
+
         ap.volume(0.2, true);
 
-        // 2. 优先无条件绑定按钮点击事件，让它绝对能点开
+        // 弹窗与音乐联动
         const btn = document.getElementById('entry-btn');
         const modal = document.getElementById('welcome-modal');
         
         if (btn && modal) {
-            btn.onclick = function() {
+            btn.addEventListener('click', function() {
                 ap.play();
-                modal.style.display = 'none'; // 移除遮罩
-                
-                // 💡 核心魔法：只有等用户顺利进站后，才开始在后台悄悄加载看板娘脚本，彻底避免网页卡死
-                const pioScript = document.createElement('script');
-                pioScript.src = "https://cdn.jsdelivr.net/npm/safari-zone-widget/autoload.js";
-                document.body.appendChild(pioScript);
-            };
+                modal.style.display = 'none'; 
+            });
         }
-
-        // 看板娘气泡框样式微调
-        window.addEventListener('load', () => {
-            const style = document.createElement('style');
-            style.innerHTML = `
-                #waifu-tips {
-                    font-family: "Helvetica Neue", Arial, sans-serif !important;
-                    background-color: rgba(255, 255, 255, 0.9) !important;
-                    border-radius: 8px !important;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-                }
-                #waifu {
-                    right: 30px !important;
-                    left: auto !important;
-                    bottom: 0 !important;
-                    z-index: 99997 !important;
-                }
-            `;
-            document.head.appendChild(style);
-        });
     </script>
 </body>
 </html>
