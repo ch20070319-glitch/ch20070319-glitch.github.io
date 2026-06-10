@@ -8,70 +8,91 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
 
     <style>
+        /* 💡 1. 核心色彩变量定义 */
+        :root {
+            --bg-card: rgba(255, 255, 255, 0.85); /* 浅色模式大卡片 */
+            --bg-box: rgba(255, 255, 255, 0.9);   /* 浅色模式小盒子 */
+            --text-main: #333333;                 /* 浅色主文字 */
+            --text-sub: #666666;                  /* 浅色副文字 */
+            --line-color: rgba(0, 0, 0, 0.1);     /* 浅色分割线 */
+            --modal-bg: white;                    /* 浅色弹窗背景 */
+        }
+
+        /* 🌙 当 body 被加上 .dark 类名时，自动覆盖变量值 */
+        body.dark {
+            --bg-card: rgba(25, 25, 25, 0.85);    /* 深色磨砂黑卡片 */
+            --bg-box: rgba(40, 40, 40, 0.85);     /* 深色小盒子 */
+            --text-main: #e5e5e5;                 /* 护眼暗夜白主字 */
+            --text-sub: #999999;                  /* 护眼暗夜灰副字 */
+            --line-color: rgba(255, 255, 255, 0.15);/* 深色分割线 */
+            --modal-bg: #222222;                  /* 深色弹窗背景 */
+        }
+
         /* 核心布局：允许页面自然滚动 */
-      :root {
-    --bg-card: rgba(255, 255, 255, 0.85); /* 浅色模式卡片 */
-    --bg-box: rgba(255, 255, 255, 0.9);   /* 浅色模式盒子 */
-    --text-main: #333333;                 /* 主文字颜色 */
-    --text-sub: #666666;                  /* 副文字颜色 */
-    --line-color: rgba(0, 0, 0, 0.1);     /* 分割线颜色 */
-}
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            box-sizing: border-box;
+            padding: 60px 20px; 
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            position: relative;
+            color: var(--text-main);
+            /* 💡 渐变平滑过渡效果 */
+            transition: background-color 0.4s, color 0.4s;
+        }
 
-/* 2. 当 body 被加上 .dark 类名时，自动覆盖变量值 */
-body.dark {
-    --bg-card: rgba(20, 20, 20, 0.85);    /* 深色模式卡片 */
-    --bg-box: rgba(35, 35, 35, 0.9);      /* 深色模式盒子 */
-    --text-main: #e0e0e0;                 /* 暗夜白主文字 */
-    --text-sub: #aaaain;                  /* 暗夜灰副文字 */
-    --line-color: rgba(255, 255, 255, 0.15); /* 暗夜分割线 */
-}
-
-/* 3. 让原本写死的颜色，全部换成动态变量 */
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; 
-    box-sizing: border-box;
-    padding: 60px 20px; 
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    position: relative;
-    /* 让颜色切换时有 0.3 秒的平滑过渡，不晃眼 */
-    transition: background-color 0.3s, color 0.3s; 
-    color: var(--text-main); /* 使用变量 */
-}
-
-/* 让背景图在黑暗模式下变暗一点，不刺眼 */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('background.png');
-    background-size: cover;
-    background-position: center;
-    opacity: 0.3;
-    z-index: -1;
-    transition: filter 0.3s;
-}
-body.dark::before {
-    filter: brightness(0.5) contrast(1.2); /* 黑暗模式下压暗背景 */
-}
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+            transition: filter 0.4s;
+        }
+        
+        /* 🌙 黑暗模式下，自动把明亮的二次元背景图压暗，保护视力 */
+        body.dark::before {
+            filter: brightness(0.45) contrast(1.1);
+        }
 
         /* 大卡片 */
-       。profile-card {
-    text-align: center;
-    padding: 40px;
-    width: 100%;
-    max-width: 850px;        
-    height: auto; 
-    background-color: var(--bg-card); /* 使用变量 */
-    border-radius: 16px;      
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    box-sizing: border-box;
-    transition: background-color 0.3s;
-       }
+        .profile-card {
+            position: relative; /* 为右上角的绝对定位按钮提供锚点 */
+            text-align: center;
+            padding: 40px;
+            width: 100%;
+            max-width: 850px;        
+            height: auto; 
+            background-color: var(--bg-card); 
+            border-radius: 16px;      
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            transition: background-color 0.4s, box-shadow 0.4s;
+        }
+
+        /* 昼夜切换小开关样式 */
+        #dark-mode-toggle {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 99;
+            user-select: none;
+            transition: transform 0.2s ease;
+        }
+        #dark-mode-toggle:hover {
+            transform: scale(1.15); /* 悬浮时微微放大，增强微交互感 */
+        }
 
         /* 头像强制正圆 */
         .avatar {
@@ -83,10 +104,14 @@ body.dark::before {
             margin: 0 auto 20px auto;
             border: 4px solid white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: border-color 0.4s;
+        }
+        body.dark .avatar {
+            border-color: #444; /* 黑暗模式下改用暗色描边，不晃眼 */
         }
 
         /* 介绍板块横向并排且等宽 */
-        。sections-container {
+        .sections-container {
             display: flex !important;
             flex-direction: row !important; 
             justify-content: center;
@@ -97,23 +122,21 @@ body.dark::before {
         }
 
         /* 小盒子 */
-       。section-box {
-    background-color: var(--bg-box); /* 使用变量 */
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    flex: 1 !important; 
-    text-align: left;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--text-main); /* 使用变量 */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: background-color 0.3s;
-       }
-        h1, h2, h3 { color: var(--text-main); }
-.progress-title { color: var(--text-sub); }
+        .section-box {
+            background-color: var(--bg-box);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            flex: 1 !important; 
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: background-color 0.4s, box-shadow 0.4s;
+        }
 
         /* 💡 纯本地时光进度条的精美 CSS 样式 */
         .progress-wrapper {
@@ -121,14 +144,19 @@ body.dark::before {
             background: rgba(0, 0, 0, 0.03);
             padding: 10px;
             border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--line-color);
+            transition: border-color 0.4s, background-color 0.4s;
+        }
+        body.dark .progress-wrapper {
+            background: rgba(255, 255, 255, 0.02);
         }
         .progress-title {
             font-size: 12px;
-            color: #666;
+            color: var(--text-sub);
             margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
+            transition: color 0.4s;
         }
         progress {
             width: 100%;
@@ -140,10 +168,18 @@ body.dark::before {
         progress::-webkit-progress-bar {
             background-color: #e0e0e0;
             border-radius: 5px;
+            transition: background-color 0.4s;
+        }
+        body.dark progress::-webkit-progress-bar {
+            background-color: #444; /* 黑暗模式轨道变深 */
         }
         progress::-webkit-progress-value {
-            background-color: #333; /* 酷炫黑灰进度条 */
+            background-color: #333; 
             border-radius: 5px;
+            transition: background-color 0.4s;
+        }
+        body.dark progress::-webkit-progress-value {
+            background-color: #aaa; /* 黑暗模式进度条高亮变为银白 */
         }
 
         /* 留言板区域 */
@@ -166,26 +202,28 @@ body.dark::before {
 
         /* 弹窗内容 */
         .modal-box {
-            background-color: white;
+            background-color: var(--modal-bg);
             padding: 30px;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             z-index: 99999 !important;
+            transition: background-color 0.4s;
         }
 
         #entry-btn {
-            background-color: #333;
-            color: white;
+            background-color: var(--text-main);
+            color: var(--modal-bg);
             border: none;
             padding: 10px 24px;
             font-size: 16px;
             border-radius: 6px;
             cursor: pointer;
             margin-top: 15px;
+            transition: background-color 0.4s, color 0.4s;
         }
         #entry-btn:hover {
-            background-color: #555;
+            opacity: 0.8;
         }
 
         /* 播放器吸底层级 */
@@ -197,20 +235,11 @@ body.dark::before {
 <body>
 
     <div class="profile-card">
+        <button id="dark-mode-toggle" title="切换主题">🌙</button>
+
         <img id="avatar" src="avatar.png" alt="我的头像" class="avatar">
-       <button id="dark-mode-toggle" style="
-    position: absolute; 
-    top: 20px; 
-    right: 20px; 
-    background: none; 
-    border: none; 
-    font-size: 24px; 
-    cursor: pointer; 
-    z-index: 101;
-    user-select: none;
-">🌓</button>
         <h1>我是 hot chocolate</h1>
-        <p style="color: #666; margin-top: -5px;">这是我的第一个个人网站</p>
+        <p style="color: var(--text-sub); margin-top: -5px; transition: color 0.4s;">这是我的第一个个人网站</p>
         
         <div class="sections-container">
             <div class="section-box">
@@ -242,9 +271,9 @@ body.dark::before {
         </div>
 
         <div class="comment-area">
-            <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 20px;">
-            <h3 style="color: #333; margin-bottom: 15px;">✍️ 交流留言板</h3>
-            <p style="color: #666; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">
+            <hr style="border: 0; border-top: 1px solid var(--line-color); margin-bottom: 20px; transition: border-color 0.4s;">
+            <h3 style="margin-bottom: 15px;">✍️ 交流留言板</h3>
+            <p style="font-size: 14px; margin-top: -10px; margin-bottom: 20px; transition: color 0.4s;">
                 If you have any valuable feedback, feel free to drop it in the comment box below—it would be a great help to me!
             </p>
             
@@ -278,7 +307,7 @@ body.dark::before {
             audio: [{
                 name: 'Overjoy ★ OVERDOSE!!', 
                 artist: 'BilliumMoto/黑皇帝/Sobrem/Vally.exe',     
-                url: 'music.mp3'， 
+                url: 'music.mp3', 
                 cover: 'album.png'  
             }]
         });
@@ -288,29 +317,26 @@ body.dark::before {
         const btn = document.getElementById('entry-btn');
         const modal = document.getElementById('welcome-modal');
         if (btn && modal) {
-            btn。addEventListener('click'， function() {
+            btn.addEventListener('click', function() {
                 ap.play();
                 modal.style.display = 'none'; 
             });
         }
 
-        // 💡 纯本地硬核计算逻辑：用毫秒计算精确的时间流逝
+        // 💡 时光进度条逻辑
         function updateProgress() {
             const now = new Date();
             
-            // 1. 计算 2026 全年进度
             const startOfYear = new Date('2026-01-01T00:00:00');
             const endOfYear = new Date('2027-01-01T00:00:00');
             const yearPassed = ((now - startOfYear) / (endOfYear - startOfYear)) * 100;
             
-            // 2. 计算大一学年进度（假设大一从 2025 年 9 月 1 日到 2026 年 7 月 1 日左右结束）
             const startOfTerm = new Date('2025-09-01T00:00:00');
             const endOfTerm = new Date('2026-07-01T00:00:00');
             let termPassed = ((now - startOfTerm) / (endOfTerm - startOfTerm)) * 100;
-            if (termPassed > 100) termPassed = 100; // 封顶 100%
+            if (termPassed > 100) termPassed = 100; 
             if (termPassed < 0) termPassed = 0;
 
-            // 将计算结果塞给 HTML 组件渲染
             document.getElementById('year-progress').value = yearPassed;
             document.getElementById('year-percent').innerText = yearPassed.toFixed(2) + '%';
             
@@ -318,46 +344,59 @@ body.dark::before {
             document.getElementById('term-percent').innerText = termPassed.toFixed(2) + '%';
         }
 
-        // 进网页立刻执行一次，随后每小时刷新一次即可（极其省电、省内存）
         updateProgress();
         setInterval(updateProgress, 3600000);
-        // 🌓 黑暗模式核心逻辑
-const toggleBtn = document.getElementById('dark-mode-toggle');
-const body = document.body;
 
-// 1. 进网页时，先检查本地存储（localStorage）里有没有用户上次的选择
-const currentTheme = localStorage.getItem('theme');
+        // 🌓 黑暗模式核心控制逻辑（利用 localStorage 赋予它记忆灵魂）
+        const toggleBtn = document.getElementById('dark-mode-toggle');
+        const body = document.body;
 
-if (currentTheme === 'dark') {
-    body.classList.add('dark');
-    toggleBtn.innerText = '☀️'; // 如果是黑暗模式，图标变成太阳
-} else {
-    toggleBtn.innerText = '🌙'; // 如果是浅色模式，图标变成月亮
-}
-
-// 2. 监听开关点击事件
-toggleBtn.addEventListener('click', function() {
-    // 切换 body 的 .dark 类名
-    body.classList.toggle('dark');
-    
-    // 判断当前状态，保存进 localStorage，并切换图标
-    if (body.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-        toggleBtn.innerText = '☀️';
-    } else {
-        localStorage.setItem('theme', 'light');
-        toggleBtn.innerText = '🌙';
-    }
-    
-    // 【彩蛋联动】顺便让你的 APlayer 播放器也切换主题颜色
-    if (ap) {
-        if (body.classList.contains('dark')) {
-            ap.theme = '#ff7675'; // 黑暗模式下，播放器进度条变猛男粉/暗红
+        // 1. 进网页时自动初始化检查
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark');
+            toggleBtn.innerText = '☀️';
         } else {
-            ap.theme = '#2980b9'; // 浅色模式恢复蓝色
+            toggleBtn.innerText = '🌙';
         }
-    }
-});
+        
+        // 确保初始化时 APlayer 状态也是对的
+        syncPlayerTheme();
+
+        // 2. 监听按钮点击
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            
+            if (body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                toggleBtn.innerText = '☀️';
+            } else {
+                localStorage.setItem('theme', 'light');
+                toggleBtn.innerText = '🌙';
+            }
+            
+            syncPlayerTheme();    // 变色联动一：音乐播放器
+            syncUtterancesTheme(); // 变色联动二：GitHub 留言板
+        });
+
+        // 🎨 变色联动：让 APlayer 进度条颜色跟随昼夜切换
+        function syncPlayerTheme() {
+            if (!ap) return;
+            if (body.classList.contains('dark')) {
+                ap.theme = '#95a5a6'; // 黑暗模式下变成有质感的太空灰
+            } else {
+                ap.theme = '#333333'; // 浅色模式恢复极简酷黑
+            }
+        }
+
+        // ✍️ 变色联动：通过 postMessage 跨域操控 Utterances 评论区框架改变主题
+        function syncUtterancesTheme() {
+            const iframe = document.querySelector('.utterances-frame');
+            if (!iframe) return;
+            const theme = body.classList.contains('dark') ? 'github-dark' : 'github-light';
+            const message = { type: 'set-theme', theme: theme };
+            iframe.contentWindow.postMessage(message, 'https://utteranc.es');
+        }
     </script>
 </body>
 </html>
