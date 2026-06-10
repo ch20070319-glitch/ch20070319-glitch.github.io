@@ -1,168 +1,286 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hot chocolate 的个人主页</title>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hot chocolate 的个人主页</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
 
-    <style>
-        /* 核心布局：允许页面自然滚动 */
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; 
-            box-sizing: border-box;
-            padding: 60px 20px; 
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            position: relative;
-        }
+    <style>
+        /* 核心布局：允许页面自然滚动 */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            box-sizing: border-box;
+            padding: 60px 20px; 
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            position: relative;
+        }
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('background.png');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.3;
-            z-index: -1;
-        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
 
-        /* 大卡片 */
-        .profile-card {
-            text-align: center;
-            padding: 40px;
-            width: 100%;
-            max-width: 850px;        
-            height: auto; 
-            background-color: rgba(255, 255, 255, 0.85); 
-            border-radius: 16px;      
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-        }
+        /* 大卡片 */
+        .profile-card {
+            text-align: center;
+            padding: 40px;
+            width: 100%;
+            max-width: 850px;        
+            height: auto; 
+            background-color: rgba(255, 255, 255, 0.85); 
+            border-radius: 16px;      
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
 
-        /* 头像强制正圆 */
-        .avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50% !important;
-            object-fit: cover !important;
-            display: block;
-            margin: 0 auto 20px auto;
-            border: 4px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
+        /* 头像强制正圆 */
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+            display: block;
+            margin: 0 auto 20px auto;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
 
-        /* 介绍板块横向并排且等宽 */
-        .sections-container {
-            display: flex !important;
-            flex-direction: row !important; 
-            justify-content: center;
-            align-items: stretch; 
-            gap: 20px;
-            margin-top: 35px;
-            width: 100%;
-        }
+        /* 介绍板块横向并排且等宽 */
+        .sections-container {
+            display: flex !important;
+            flex-direction: row !important; 
+            justify-content: center;
+            align-items: stretch; 
+            gap: 20px;
+            margin-top: 35px;
+            width: 100%;
+        }
 
-        /* 小盒子 */
-        .section-box {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            flex: 1 !important; 
-            text-align: left;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #444;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+        /* 小盒子 */
+        .section-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            flex: 1 !important; 
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-        /* 💡 纯本地时光进度条的精美 CSS 样式 */
-        .progress-wrapper {
-            margin-top: 15px;
-            background: rgba(0, 0, 0, 0.03);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        .progress-title {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        progress {
-            width: 100%;
-            height: 10px;
-            display: block;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-        progress::-webkit-progress-bar {
-            background-color: #e0e0e0;
-            border-radius: 5px;
-        }
-        progress::-webkit-progress-value {
-            background-color: #333; /* 酷炫黑灰进度条 */
-            border-radius: 5px;
-        }
+        /* 💡 纯本地时光进度条的精美 CSS 样式 */
+        .progress-wrapper {
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .progress-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        progress {
+            width: 100%;
+            height: 10px;
+            display: block;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        progress::-webkit-progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+        progress::-webkit-progress-value {
+            background-color: #333; /* 酷炫黑灰进度条 */
+            border-radius: 5px;
+        }
 
-        /* 留言板区域 */
-        .comment-area {
-            width: 100%;
-            margin-top: 40px;
-            text-align: left;
-        }
+        /* 留言板区域 */
+        .comment-area {
+            width: 100%;
+            margin-top: 40px;
+            text-align: left;
+        }
 
-        /* 弹窗遮罩 */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99998 !important; 
-        }
+        /* 弹窗遮罩 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99998 !important; 
+        }
 
-        /* 弹窗内容 */
-        .modal-box {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            z-index: 99999 !important;
-        }
+        /* 弹窗内容 */
+        .modal-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 99999 !important;
+        }
 
-        #entry-btn {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        #entry-btn:hover {
-            background-color: #555;
-        }
+        #entry-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        #entry-btn:hover {
+            background-color: #555;
+        }
 
-        /* 播放器吸底层级 */
-        .aplayer {
-            z-index: 10000 !important;
-        }
-    </style>
+        /* 播放器吸底层级 */
+        .aplayer {
+            z-index: 10000 !important;
+        }
+    </style>
 </head>
 <body>
- 
+
+    <div class="profile-card">
+        <img id="avatar" src="avatar.png" alt="我的头像" class="avatar">
+        <h1>我是 hot chocolate</h1>
+        <p style="color: #666; margin-top: -5px;">这是我的第一个个人网站</p>
+        
+        <div class="sections-container">
+            <div class="section-box">
+                <div>
+                    <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大一新生。</p>
+                </div>
+                
+                <div class="progress-wrapper">
+                    <div class="progress-title">
+                        <span>⏳ 2026 年已逝去</span>
+                        <span id="year-percent">0.00%</span>
+                    </div>
+                    <progress id="year-progress" value="0" max="100"></progress>
+                    
+                    <div class="progress-title" style="margin-top: 10px;">
+                        <span>🎓 大一生活已度过</span>
+                        <span id="term-percent">0.00%</span>
+                    </div>
+                    <progress id="term-progress" value="0" max="100"></progress>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <p style="margin: 0;">学习过 C，Java 等语言，最近在学 HTML，Python。未来还计划学习 C++ 和 Agent 方面的知识。</p>
+            </div>
+            <div class="section-box">
+                <p style="margin: 0;">喜欢玩 Roguelike 卡牌类，节奏音乐类以及推理解密类游戏。偶尔会跟朋友一起玩派对类游戏。最近打算尝试玩 Gal。平时也喜欢听音乐，看漫画，轻小说。喜欢喝绿茶。</p>
+            </div>
+        </div>
+
+        <div class="comment-area">
+            <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 20px;">
+            <h3 style="color: #333; margin-bottom: 15px;">✍️ 交流留言板</h3>
+            <p style="color: #666; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">
+                If you have any valuable feedback, feel free to drop it in the comment box below—it would be a great help to me!
+            </p>
+            
+            <script src="https://utteranc.es/client.js"
+                    repo="ch20070319-glitch/ch20070319-glitch.github.io"
+                    issue-term="pathname"
+                    theme="github-light"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        </div>
+    </div>
+
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>欢迎来到 hot chocolate 的个人网站</h2>
+            <p>为了获得最佳体验，建议开启背景音乐 🎵</p>
+            <button id="entry-btn">进入网站</button>
+        </div>
+    </div>
+
+    <div id="aplayer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+
+    <script>
+        // 初始化播放器配置
+        const ap = new APlayer({
+            container: document.getElementById('aplayer'),
+            fixed: true, 
+            audio: [{
+                name: 'Overjoy ★ OVERDOSE!!', 
+                artist: 'BilliumMoto/黑皇帝/Sobrem/Vally.exe',     
+                url: 'music.mp3', 
+                cover: 'album.png'  
+            }]
+        });
+        ap.volume(0.2, true);
+
+        // 弹窗与音乐联动
+        const btn = document.getElementById('entry-btn');
+        const modal = document.getElementById('welcome-modal');
+        if (btn && modal) {
+            btn.addEventListener('click', function() {
+                ap.play();
+                modal.style.display = 'none'; 
+            });
+        }
+
+        // 💡 纯本地硬核计算逻辑：用毫秒计算精确的时间流逝
+        function updateProgress() {
+            const now = new Date();
+            
+            // 1. 计算 2026 全年进度
+            const startOfYear = new Date('2026-01-01T00:00:00');
+            const endOfYear = new Date('2027-01-01T00:00:00');
+            const yearPassed = ((now - startOfYear) / (endOfYear - startOfYear)) * 100;
+            
+            // 2. 计算大一学年进度（假设大一从 2025 年 9 月 1 日到 2026 年 7 月 1 日左右结束）
+            const startOfTerm = new Date('2025-09-01T00:00:00');
+            const endOfTerm = new Date('2026-07-01T00:00:00');
+            let termPassed = ((now - startOfTerm) / (endOfTerm - startOfTerm)) * 100;
+            if (termPassed > 100) termPassed = 100; // 封顶 100%
+            if (termPassed < 0) termPassed = 0;
+
+            // 将计算结果塞给 HTML 组件渲染
+            document.getElementById('year-progress').value = yearPassed;
+            document.getElementById('year-percent').innerText = yearPassed.toFixed(2) + '%';
+            
+            document.getElementById('term-progress').value = termPassed;
+            document.getElementById('term-percent').innerText = termPassed.toFixed(2) + '%';
+        }
+
+        // 进网页立刻执行一次，随后每小时刷新一次即可（极其省电、省内存）
+        updateProgress();
+        setInterval(updateProgress, 3600000);
+    </script>
+</body>
+</html>
+     
