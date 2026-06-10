@@ -9,42 +9,69 @@
 
     <style>
         /* 核心布局：允许页面自然滚动 */
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; 
-            box-sizing: border-box;
-            padding: 60px 20px; 
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            position: relative;
-        }
+      :root {
+    --bg-card: rgba(255, 255, 255, 0.85); /* 浅色模式卡片 */
+    --bg-box: rgba(255, 255, 255, 0.9);   /* 浅色模式盒子 */
+    --text-main: #333333;                 /* 主文字颜色 */
+    --text-sub: #666666;                  /* 副文字颜色 */
+    --line-color: rgba(0, 0, 0, 0.1);     /* 分割线颜色 */
+}
 
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('background.png');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.3;
-            z-index: -1;
-        }
+/* 2. 当 body 被加上 .dark 类名时，自动覆盖变量值 */
+body.dark {
+    --bg-card: rgba(20, 20, 20, 0.85);    /* 深色模式卡片 */
+    --bg-box: rgba(35, 35, 35, 0.9);      /* 深色模式盒子 */
+    --text-main: #e0e0e0;                 /* 暗夜白主文字 */
+    --text-sub: #aaaain;                  /* 暗夜灰副文字 */
+    --line-color: rgba(255, 255, 255, 0.15); /* 暗夜分割线 */
+}
+
+/* 3. 让原本写死的颜色，全部换成动态变量 */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    box-sizing: border-box;
+    padding: 60px 20px; 
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    position: relative;
+    /* 让颜色切换时有 0.3 秒的平滑过渡，不晃眼 */
+    transition: background-color 0.3s, color 0.3s; 
+    color: var(--text-main); /* 使用变量 */
+}
+
+/* 让背景图在黑暗模式下变暗一点，不刺眼 */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('background.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+    z-index: -1;
+    transition: filter 0.3s;
+}
+body.dark::before {
+    filter: brightness(0.5) contrast(1.2); /* 黑暗模式下压暗背景 */
+}
 
         /* 大卡片 */
-        .profile-card {
-            text-align: center;
-            padding: 40px;
-            width: 100%;
-            max-width: 850px;        
-            height: auto; 
-            background-color: rgba(255, 255, 255, 0.85); 
-            border-radius: 16px;      
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-        }
+       。profile-card {
+    text-align: center;
+    padding: 40px;
+    width: 100%;
+    max-width: 850px;        
+    height: auto; 
+    background-color: var(--bg-card); /* 使用变量 */
+    border-radius: 16px;      
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+       }
 
         /* 头像强制正圆 */
         .avatar {
@@ -59,7 +86,7 @@
         }
 
         /* 介绍板块横向并排且等宽 */
-        .sections-container {
+        。sections-container {
             display: flex !important;
             flex-direction: row !important; 
             justify-content: center;
@@ -70,20 +97,23 @@
         }
 
         /* 小盒子 */
-        .section-box {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            flex: 1 !important; 
-            text-align: left;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #444;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+       。section-box {
+    background-color: var(--bg-box); /* 使用变量 */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    flex: 1 !important; 
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-main); /* 使用变量 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background-color 0.3s;
+       }
+        h1, h2, h3 { color: var(--text-main); }
+.progress-title { color: var(--text-sub); }
 
         /* 💡 纯本地时光进度条的精美 CSS 样式 */
         .progress-wrapper {
@@ -168,6 +198,17 @@
 
     <div class="profile-card">
         <img id="avatar" src="avatar.png" alt="我的头像" class="avatar">
+       <button id="dark-mode-toggle" style="
+    position: absolute; 
+    top: 20px; 
+    right: 20px; 
+    background: none; 
+    border: none; 
+    font-size: 24px; 
+    cursor: pointer; 
+    z-index: 101;
+    user-select: none;
+">🌓</button>
         <h1>我是 hot chocolate</h1>
         <p style="color: #666; margin-top: -5px;">这是我的第一个个人网站</p>
         
@@ -237,7 +278,7 @@
             audio: [{
                 name: 'Overjoy ★ OVERDOSE!!', 
                 artist: 'BilliumMoto/黑皇帝/Sobrem/Vally.exe',     
-                url: 'music.mp3', 
+                url: 'music.mp3'， 
                 cover: 'album.png'  
             }]
         });
@@ -247,7 +288,7 @@
         const btn = document.getElementById('entry-btn');
         const modal = document.getElementById('welcome-modal');
         if (btn && modal) {
-            btn.addEventListener('click', function() {
+            btn。addEventListener('click'， function() {
                 ap.play();
                 modal.style.display = 'none'; 
             });
@@ -280,6 +321,43 @@
         // 进网页立刻执行一次，随后每小时刷新一次即可（极其省电、省内存）
         updateProgress();
         setInterval(updateProgress, 3600000);
+        // 🌓 黑暗模式核心逻辑
+const toggleBtn = document.getElementById('dark-mode-toggle');
+const body = document.body;
+
+// 1. 进网页时，先检查本地存储（localStorage）里有没有用户上次的选择
+const currentTheme = localStorage.getItem('theme');
+
+if (currentTheme === 'dark') {
+    body.classList.add('dark');
+    toggleBtn.innerText = '☀️'; // 如果是黑暗模式，图标变成太阳
+} else {
+    toggleBtn.innerText = '🌙'; // 如果是浅色模式，图标变成月亮
+}
+
+// 2. 监听开关点击事件
+toggleBtn.addEventListener('click', function() {
+    // 切换 body 的 .dark 类名
+    body.classList.toggle('dark');
+    
+    // 判断当前状态，保存进 localStorage，并切换图标
+    if (body.classList.contains('dark')) {
+        localStorage.setItem('theme', 'dark');
+        toggleBtn.innerText = '☀️';
+    } else {
+        localStorage.setItem('theme', 'light');
+        toggleBtn.innerText = '🌙';
+    }
+    
+    // 【彩蛋联动】顺便让你的 APlayer 播放器也切换主题颜色
+    if (ap) {
+        if (body.classList.contains('dark')) {
+            ap.theme = '#ff7675'; // 黑暗模式下，播放器进度条变猛男粉/暗红
+        } else {
+            ap.theme = '#2980b9'; // 浅色模式恢复蓝色
+        }
+    }
+});
     </script>
 </body>
 </html>
