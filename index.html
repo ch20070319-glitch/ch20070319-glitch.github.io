@@ -16,6 +16,8 @@
             --text-sub: #666666;                  /* 浅色副文字 */
             --line-color: rgba(0, 0, 0, 0.1);     /* 浅色分割线 */
             --modal-bg: white;                    /* 浅色弹窗背景 */
+            --sidebar-bg: rgba(255, 255, 255, 0.95); /* 浅色侧边栏 */
+            --sidebar-hover: rgba(0, 0, 0, 0.05);  /* 侧边栏选项悬浮 */
         }
 
         /* 🌙 当 body 被加上 .dark 类名时，自动覆盖变量值 */
@@ -26,6 +28,8 @@
             --text-sub: #999999;                  /* 护眼暗夜灰副字 */
             --line-color: rgba(255, 255, 255, 0.15);/* 深色分割线 */
             --modal-bg: #222222;                  /* 深色弹窗背景 */
+            --sidebar-bg: rgba(20, 20, 20, 0.95);  /* 深色侧边栏 */
+            --sidebar-hover: rgba(255, 255, 255, 0.1); /* 深色侧边栏悬浮 */
         }
 
         /* 核心布局：允许页面自然滚动 */
@@ -41,7 +45,6 @@
             font-family: "Helvetica Neue", Arial, sans-serif;
             position: relative;
             color: var(--text-main);
-            /* 💡 渐变平滑过渡效果 */
             transition: background-color 0.4s, color 0.4s;
         }
 
@@ -57,14 +60,117 @@
             transition: filter 0.4s;
         }
         
-        /* 🌙 黑暗模式下，自动把明亮的二次元背景图压暗，保护视力 */
         body.dark::before {
             filter: brightness(0.45) contrast(1.1);
         }
 
+        /* 🚪 2. 侧边栏核心 CSS 样式 */
+        /* 触发按钮（左上角悬浮三道杠） */
+        .sidebar-toggle {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            background: var(--bg-card);
+            border: 1px solid var(--line-color);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.4s, border-color 0.4s;
+        }
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 侧边栏本体 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px; /* 初始隐藏在屏幕左侧外面 */
+            width: 280px;
+            height: 100%;
+            background-color: var(--sidebar-bg);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            box-sizing: border-box;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* 平滑拉开和收起的动画关键 */
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s;
+        }
+
+        /* 当激活时，将其拉回屏幕内 */
+        .sidebar.active {
+            left: 0;
+        }
+
+        /* 侧边栏顶部的关闭按钮 */
+        .sidebar-close {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-main);
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* 侧边栏导航链接选项 */
+        .sidebar-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 20px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .sidebar-menu-item:hover {
+            background-color: var(--sidebar-hover);
+            padding-left: 25px; /* 悬浮时有个向右微微滑动的微动效 */
+        }
+        .sidebar-menu-item.active {
+            background-color: var(--text-main);
+            color: var(--modal-bg); /* 高亮当前选中的页面 */
+        }
+
+        /* 点击侧边栏拉开时，网页主体后面加一层半透明遮罩，点击遮罩能缩回侧栏 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 📄 3. 页面内容多档切换布局 */
+        .page-content {
+            display: none; /* 默认所有子页面都隐藏 */
+        }
+        .page-content.active {
+            display: block; /* 只有加上 active 类的页面才显示 */
+        }
+
         /* 大卡片 */
         .profile-card {
-            position: relative; /* 为右上角的绝对定位按钮提供锚点 */
+            position: relative; 
             text-align: center;
             padding: 40px;
             width: 100%;
@@ -77,7 +183,6 @@
             transition: background-color 0.4s, box-shadow 0.4s;
         }
 
-        /* 昼夜切换小开关样式 */
         #dark-mode-toggle {
             position: absolute;
             top: 25px;
@@ -91,7 +196,7 @@
             transition: transform 0.2s ease;
         }
         #dark-mode-toggle:hover {
-            transform: scale(1.15); /* 悬浮时微微放大，增强微交互感 */
+            transform: scale(1.15); 
         }
 
         /* 头像强制正圆 */
@@ -107,7 +212,7 @@
             transition: border-color 0.4s;
         }
         body.dark .avatar {
-            border-color: #444; /* 黑暗模式下改用暗色描边，不晃眼 */
+            border-color: #444; 
         }
 
         /* 介绍板块横向并排且等宽 */
@@ -138,7 +243,6 @@
             transition: background-color 0.4s, box-shadow 0.4s;
         }
 
-        /* 💡 纯本地时光进度条的精美 CSS 样式 */
         .progress-wrapper {
             margin-top: 15px;
             background: rgba(0, 0, 0, 0.03);
@@ -171,7 +275,7 @@
             transition: background-color 0.4s;
         }
         body.dark progress::-webkit-progress-bar {
-            background-color: #444; /* 黑暗模式轨道变深 */
+            background-color: #444; 
         }
         progress::-webkit-progress-value {
             background-color: #333; 
@@ -179,42 +283,9 @@
             transition: background-color 0.4s;
         }
         body.dark progress::-webkit-progress-value {
-            background-color: #aaa; /* 黑暗模式进度条高亮变为银白 */
+            background-color: #aaa; 
         }
 
-        /* 🕹️ Steam 游戏卡片区域 */
-        .steam-box {
-            background-color: var(--bg-box);
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            margin-top: 25px; /* 跟上面的三个小盒子拉开间距 */
-            text-align: left;
-            transition: background-color 0.4s, box-shadow 0.4s;
-        }
-        
-        .steam-box h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .steam-card-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* 让动态生成的图片能够自适应手机端和电脑端宽 */
-        .steam-card-container img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-        
-        
         /* 留言板区域 */
         .comment-area {
             width: 100%;
@@ -259,7 +330,6 @@
             opacity: 0.8;
         }
 
-        /* 播放器吸底层级 */
         .aplayer {
             z-index: 10000 !important;
         }
@@ -267,47 +337,78 @@
 </head>
 <body>
 
+    <button class="sidebar-toggle" id="menu-open-btn" title="打开菜单">☰</button>
+
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close" id="menu-close-btn">×</button>
+        <a href="#" class="sidebar-menu-item active" data-target="page-home">🏠 Home</a>
+        <a href="#" class="sidebar-menu-item" data-target="page-album">🖼️ Album</a>
+        <a href="#" class="sidebar-menu-item" data-target="page-favorite">⭐ Favorite</a>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
     <div class="profile-card">
         <button id="dark-mode-toggle" title="切换主题">🌙</button>
 
-        <img id="avatar" src="avatar.png" alt="我的头像" class="avatar">
-        <h1>我是 hot chocolate</h1>
-        <p style="color: var(--text-sub); margin-top: -5px; transition: color 0.4s;">这是我的第一个个人网站</p>
-        
-        <div class="sections-container">
-            <div class="section-box">
-                <div>
-                    <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大一新生。</p>
-                </div>
-                
-                <div class="progress-wrapper">
-                    <div class="progress-title">
-                        <span>⏳ 2026 年已逝去</span>
-                        <span id="year-percent">0.00%</span>
+        <div id="page-home" class="page-content active">
+            <img id="avatar" src="avatar.png" alt="我的头像" class="avatar">
+            <h1>我是 hot chocolate</h1>
+            <p style="color: var(--text-sub); margin-top: -5px; transition: color 0.4s;">这是我的第一个个人网站</p>
+            
+            <div class="sections-container">
+                <div class="section-box">
+                    <div>
+                        <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大一新生。</p>
                     </div>
-                    <progress id="year-progress" value="0" max="100"></progress>
                     
-                    <div class="progress-title" style="margin-top: 10px;">
-                        <span>🎓 大一生活已度过</span>
-                        <span id="term-percent">0.00%</span>
+                    <div class="progress-wrapper">
+                        <div class="progress-title">
+                            <span>⏳ 2026 年已逝去</span>
+                            <span id="year-percent">0.00%</span>
+                        </div>
+                        <progress id="year-progress" value="0" max="100"></progress>
+                        
+                        <div class="progress-title" style="margin-top: 10px;">
+                            <span>🎓 大一生活已度过</span>
+                            <span id="term-percent">0.00%</span>
+                        </div>
+                        <progress id="term-progress" value="0" max="100"></progress>
                     </div>
-                    <progress id="term-progress" value="0" max="100"></progress>
                 </div>
-            </div>
 
-            <div class="section-box">
-                <p style="margin: 0;">学习过 C，Java 等语言，最近在学 HTML，Python。未来还计划学习 C++ 和 Agent 方面的知识。</p>
-            </div>
-            <div class="section-box">
-                <p style="margin: 0;">喜欢玩 Roguelike 卡牌类，节奏音乐类以及推理解密类游戏。偶尔会跟朋友一起玩派对类游戏。最近打算尝试玩 Gal。平时也喜欢听音乐，看漫画，轻小说。喜欢喝绿茶。</p>
+                <div class="section-box">
+                    <p style="margin: 0;">学习过 C，Java 等语言，最近在学 HTML，Python。未来还计划学习 C++ 和 Agent 方面的知识。</p>
+                </div>
+                <div class="section-box">
+                    <p style="margin: 0;">喜欢玩 Roguelike 卡牌类，节奏音乐类以及推理解密类游戏。偶尔会跟朋友一起玩派对类游戏。最近打算尝试玩 Gal。平时也喜欢听音乐，看漫画，轻小说。喜欢喝绿茶。</p>
+                </div>
             </div>
         </div>
-        <div class="steam-box">
-            <h3>🕹️ 最近在玩什么？</h3>
-            <div class="steam-card-container">
-                <a href="https://steamcommunity.com/profiles/76561199865901882" target="_blank">
-                    <img id="steam-card-img" src="https://steam-card.vercel.app/api/card?steamid=76561198075727181&theme=light" alt="Steam Card">
-                </a>
+
+        <div id="page-album" class="page-content">
+            <h2 style="margin-top:0;">🖼️ 我的相册集</h2>
+            <p style="color: var(--text-sub);">这里即将用来存放生活碎片和喜欢的二次元插画...</p>
+            <div class="sections-container">
+                <div class="section-box" style="text-align: center; padding: 40px 20px;">
+                    🚧 相册系统搭建中，敬请期待！
+                </div>
+            </div>
+        </div>
+
+        <div id="page-favorite" class="page-content">
+            <h2 style="margin-top:0;">⭐ 兴趣收藏与安利</h2>
+            <p style="color: var(--text-sub);">安利一些自己喜欢的轻小说、神作 Galgame、漫画或音乐。</p>
+            <div class="sections-container">
+                <div class="section-box">
+                    <strong>📖 轻小说 / 漫画</strong>
+                    <p style="margin: 5px 0 0 0; font-size:13px; color: var(--text-sub);">等填坑中...</p>
+                </div>
+                <div class="section-box">
+                    <strong>🎮 游戏安利</strong>
+                    <p style="margin: 5px 0 0 0; font-size:13px; color: var(--text-sub);">等填坑中...</p>
+                </div>
             </div>
         </div>
 
@@ -364,10 +465,9 @@
             });
         }
 
-        // 💡 时光进度条逻辑
+        // 时光进度条
         function updateProgress() {
             const now = new Date();
-            
             const startOfYear = new Date('2026-01-01T00:00:00');
             const endOfYear = new Date('2027-01-01T00:00:00');
             const yearPassed = ((now - startOfYear) / (endOfYear - startOfYear)) * 100;
@@ -378,21 +478,22 @@
             if (termPassed > 100) termPassed = 100; 
             if (termPassed < 0) termPassed = 0;
 
-            document.getElementById('year-progress').value = yearPassed;
-            document.getElementById('year-percent').innerText = yearPassed.toFixed(2) + '%';
-            
-            document.getElementById('term-progress').value = termPassed;
-            document.getElementById('term-percent').innerText = termPassed.toFixed(2) + '%';
+            // 只有当对应的 DOM 节点存在时才赋值，防止切页面后报错
+            const yp = document.getElementById('year-progress');
+            if(yp) {
+                yp.value = yearPassed;
+                document.getElementById('year-percent').innerText = yearPassed.toFixed(2) + '%';
+                document.getElementById('term-progress').value = termPassed;
+                document.getElementById('term-percent').innerText = termPassed.toFixed(2) + '%';
+            }
         }
-
         updateProgress();
         setInterval(updateProgress, 3600000);
 
-        // 🌓 黑暗模式核心控制逻辑（利用 localStorage 赋予它记忆灵魂）
+        // 🌓 黑暗模式控制逻辑
         const toggleBtn = document.getElementById('dark-mode-toggle');
         const body = document.body;
 
-        // 1. 进网页时自动初始化检查
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             body.classList.add('dark');
@@ -400,18 +501,10 @@
         } else {
             toggleBtn.innerText = '🌙';
         }
-        
-        // 确保初始化时 APlayer 状态也是对的
         syncPlayerTheme();
 
-        // 2. 监听按钮点击
         toggleBtn.addEventListener('click', () => {
             body.classList.toggle('dark');
-
-            const steamImg = document.getElementById('steam-card-img');
-            // 获取当前的 17 位数字 ID（自动从已有的 src 里提取，不需要你重复改）
-            const steamId = steamImg.src.match(/steamid=(\d+)/)[1];
-            
             if (body.classList.contains('dark')) {
                 localStorage.setItem('theme', 'dark');
                 toggleBtn.innerText = '☀️';
@@ -419,30 +512,68 @@
                 localStorage.setItem('theme', 'light');
                 toggleBtn.innerText = '🌙';
             }
-            
-            syncPlayerTheme();    // 变色联动一：音乐播放器
-            syncUtterancesTheme(); // 变色联动二：GitHub 留言板
+            syncPlayerTheme();    
+            syncUtterancesTheme(); 
         });
 
-        // 🎨 变色联动：让 APlayer 进度条颜色跟随昼夜切换
         function syncPlayerTheme() {
             if (!ap) return;
-            if (body.classList.contains('dark')) {
-                ap.theme = '#95a5a6'; // 黑暗模式下变成有质感的太空灰
-            } else {
-                ap.theme = '#333333'; // 浅色模式恢复极简酷黑
-            }
+            ap.theme = body.classList.contains('dark') ? '#95a5a6' : '#333333';
         }
 
-        // ✍️ 变色联动：通过 postMessage 跨域操控 Utterances 评论区框架改变主题
         function syncUtterancesTheme() {
             const iframe = document.querySelector('.utterances-frame');
             if (!iframe) return;
             const theme = body.classList.contains('dark') ? 'github-dark' : 'github-light';
-            const message = { type: 'set-theme', theme: theme };
-            iframe.contentWindow.postMessage(message, 'https://utteranc.es');
+            iframe.contentWindow.postMessage({ type: 'set-theme', theme: theme }, 'https://utteranc.es');
         }
+
+
+        // 🚪 4. 侧边栏与多页面切换的极简前端路由 JavaScript 逻辑
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const openBtn = document.getElementById('menu-open-btn');
+        const closeBtn = document.getElementById('menu-close-btn');
+        const menuItems = document.querySelectorAll('.sidebar-menu-item');
+        const pages = document.querySelectorAll('.page-content');
+
+        // 打开侧边栏
+        openBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+        });
+
+        // 关闭侧边栏函数
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        }
+        closeBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar); // 点击空白阴影处也能收回
+
+        // 页面点击切换的核心逻辑
+        menuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault(); // 阻止 <a> 标签默认的刷新跳转行为
+
+                // 1. 改变菜单高亮项
+                menuItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+
+                // 2. 切除当前旧网页，显示选中的新网页内容
+                const targetPageId = item.getAttribute('data-target');
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                    if (page.id === targetPageId) {
+                        page.classList.add('active');
+                    }
+                });
+
+                // 3. 选完菜单后，侧边栏自动缩回去
+                closeSidebar();
+            });
+        });
     </script>
 </body>
 </html>
- 
+  
