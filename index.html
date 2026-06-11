@@ -182,6 +182,39 @@
             background-color: #aaa; /* 黑暗模式进度条高亮变为银白 */
         }
 
+        /* 🕹️ Steam 游戏卡片区域 */
+        .steam-box {
+            background-color: var(--bg-box);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            margin-top: 25px; /* 跟上面的三个小盒子拉开间距 */
+            text-align: left;
+            transition: background-color 0.4s, box-shadow 0.4s;
+        }
+        
+        .steam-box h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .steam-card-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 让动态生成的图片能够自适应手机端和电脑端宽 */
+        .steam-card-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        
         /* 留言板区域 */
         .comment-area {
             width: 100%;
@@ -267,6 +300,14 @@
             </div>
             <div class="section-box">
                 <p style="margin: 0;">喜欢玩 Roguelike 卡牌类，节奏音乐类以及推理解密类游戏。偶尔会跟朋友一起玩派对类游戏。最近打算尝试玩 Gal。平时也喜欢听音乐，看漫画，轻小说。喜欢喝绿茶。</p>
+            </div>
+        </div>
+        <div class="steam-box">
+            <h3>🕹️ 最近在玩什么？</h3>
+            <div class="steam-card-container">
+                <a href="https://steamcommunity.com/profiles/76561199865901882" target="_blank">
+                    <img id="steam-card-img" src="https://steam-card.vercel.app/api/card?steamid=76561198075727181&theme=light" alt="Steam Card">
+                </a>
             </div>
         </div>
 
@@ -366,6 +407,10 @@
         // 2. 监听按钮点击
         toggleBtn.addEventListener('click', () => {
             body.classList.toggle('dark');
+
+            const steamImg = document.getElementById('steam-card-img');
+            // 获取当前的 17 位数字 ID（自动从已有的 src 里提取，不需要你重复改）
+            const steamId = steamImg.src.match(/steamid=(\d+)/)[1];
             
             if (body.classList.contains('dark')) {
                 localStorage.setItem('theme', 'dark');
@@ -400,3 +445,4 @@
     </script>
 </body>
 </html>
+ 
