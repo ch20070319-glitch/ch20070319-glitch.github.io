@@ -21,6 +21,67 @@
         }
 
         /* 🌙 当 body 被加上 .dark 类名时，自动覆盖变量值 */
+       /* 1. 让照片墙变成自适应的“多列网格” */
+.album-grid {
+    display: grid; /* 启用网格布局 */
+    /* 核心魔法：自动填充网格，每张照片最小 250px，最大自动填满，间距 20px */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+    width: 100%;
+}
+
+/* 2. 每一个照片卡片的精美样式 */
+.album-item {
+    position: relative; /* 为接下来的文字绝对定位做锚点 */
+    border-radius: 12px;
+    overflow: hidden; /* 极其重要！剪裁掉照片超出圆角的部分 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background-color: var(--bg-box); /* 联动你之前的白天暗黑变量色 */
+    aspect-ratio: 4 / 3; /* 强制所有照片卡片统一为 4:3 的黄金比例，排版极度舒适 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 3. 操控卡片内的图片本身 */
+.album-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 核心魔法：图片自动等比例裁剪填充，绝对不会被拉伸变形！ */
+    transition: transform 0.5s ease;
+}
+
+/* ✨ 4. 微交互特效：鼠标悬浮时，照片微微放大，卡片往上漂浮 */
+.album-item:hover {
+    transform: translateY(-5px); /* 往上飘 5 像素 */
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+.album-item:hover img {
+    transform: scale(1.08); /* 图片微微放大 1.08 倍，产生镜头拉近感 */
+}
+
+/* 🌌 5. 照片底部的半透明文字条 */
+.album-info {
+    position: absolute;
+    bottom: 0; left: 0; width: 100%;
+    background: rgba(0, 0, 0, 0.6); /* 黑色半透明 */
+    color: #ffffff;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 13px;
+    text-align: left;
+    
+    /* 初始状态：让文字条向下隐身 */
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+/* 鼠标悬浮在卡片上时，文字条平滑向上滑出 */
+.album-item:hover .album-info {
+    transform: translateY(0);
+}
+       
+       
+       
         body.dark {
             --bg-card: rgba(25, 25, 25, 0.85);    /* 深色磨砂黑卡片 */
             --bg-box: rgba(40, 40, 40, 0.85);     /* 深色小盒子 */
@@ -389,12 +450,36 @@
 
         <div id="page-album" class="page-content">
             <h2 style="margin-top:0;">🖼️ 我的相册集</h2>
-            <p style="color: var(--text-sub);">这里即将用来存放生活碎片和喜欢的二次元插画...</p>
-            <div class="sections-container">
-                <div class="section-box" style="text-align: center; padding: 40px 20px;">
-                    🚧 相册系统搭建中，敬请期待！
-                </div>
+            <p style="color: var(--text-sub);">这里用来存放生活碎片和喜欢的插画...</p>
+        <div class="album-grid">
+            <div class="album-item">
+               <img src="images/game-paluworld1.png" alt="暗巫猫">
+               <div class="album-info">
+                <span>和暗巫猫</span>
+               </div>
+           </div>
+
+           <div class="album-item">
+            <img src="images/life1.png" alt="潮汕牛肉自助20260206">
+            <div class="album-info">
+                <span>和朋友吃的潮汕牛肉自助</span>
             </div>
+           </div>
+
+           <div class="album-item">
+            <img src="images/pic1.png" alt="x画师">
+            <div class="album-info">
+                <span>❤️</span>
+            </div>
+           </div>
+
+           <div class="album-item">
+            <img src="images/pic2.png" alt="peipei">
+            <div class="album-info">
+                <span>佩佩生贺</span>
+            </div>
+           </div>
+        </div>
         </div>
 
         <div id="page-favorite" class="page-content">
@@ -576,4 +661,3 @@
     </script>
 </body>
 </html>
-
