@@ -8,92 +8,212 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
 
     <style>
-        /* 💡 1. 核心色彩变量定义 */
+        /* 💡 1. 核心色彩变量与书籍排版样式 */
+        .book-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.02);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        body.dark .book-item {
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* 查看详情按钮样式 */
+        .view-detail-btn {
+            background-color: var(--text-main);
+            color: var(--modal-bg);
+            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .view-detail-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* 📥 书评弹窗大遮罩（默认隐藏 display: none） */
+        .book-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px); /* 磨砂玻璃背景特效 */
+            display: none; /* 初始隐藏 */
+            justify-content: center;
+            align-items: center;
+            z-index: 10001; /* 层级一定要比播放器和侧边栏更高 */
+        }
+
+        /* 弹窗激活时的显示状态 */
+        .book-modal-overlay.active {
+            display: flex;
+        }
+
+        /* 弹窗白色/黑色主体大卡片 */
+        .book-modal-box {
+            background-color: var(--modal-bg);
+            width: 90%;
+            max-width: 700px;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.3s ease; /* 弹窗弹出的丝滑动画 */
+        }
+
+        @keyframes modalFadeIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* 关闭按钮 */
+        #book-modal-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            background: none; border: none;
+            font-size: 28px; cursor: pointer;
+            color: var(--text-main);
+        }
+
+        /* 💡 核心：左右并排布局 */
+        .book-modal-content {
+            display: flex;
+            flex-direction: row; /* 横向排列 */
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        /* 左侧封面容器 */
+        .book-modal-left {
+            flex: 2; /* 占 2 份宽度 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .book-modal-left img {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* 右侧文字内容容器 */
+        .book-modal-right {
+            flex: 3; /* 占 3 份宽度 */
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .book-modal-right h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        /* 右侧的文字框（阅读感受） */
+        .review-text-box {
+            background-color: rgba(0,0,0,0.03);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-main);
+            flex-grow: 1; /* 让文字框自动填满剩余高度 */
+            border: 1px solid var(--line-color);
+        }
+        body.dark .review-text-box {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        /* 📱 手机端自适应响应式 */
+        @media (max-width: 600px) {
+            .book-modal-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            .book-modal-left img {
+                max-width: 130px;
+            }
+        }
+        
         :root {
             --bg-card: rgba(255, 255, 255, 0.85); /* 浅色模式大卡片 */
             --bg-box: rgba(255, 255, 255, 0.9);   /* 浅色模式小盒子 */
-            --text-main: #333333;                 /* 浅色主文字 */
-            --text-sub: #666666;                  /* 浅色副文字 */
+            --text-main: #333333;                  /* 浅色主文字 */
+            --text-sub: #666666;                   /* 浅色副文字 */
             --line-color: rgba(0, 0, 0, 0.1);     /* 浅色分割线 */
             --modal-bg: white;                    /* 浅色弹窗背景 */
             --sidebar-bg: rgba(255, 255, 255, 0.95); /* 浅色侧边栏 */
             --sidebar-hover: rgba(0, 0, 0, 0.05);  /* 侧边栏选项悬浮 */
         }
 
-        /* 🌙 当 body 被加上 .dark 类名时，自动覆盖变量值 */
-       /* 1. 让照片墙变成自适应的“多列网格” */
-.album-grid {
-    display: grid; /* 启用网格布局 */
-    /* 核心魔法：自动填充网格，每张照片最小 250px，最大自动填满，间距 20px */
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 25px;
-    width: 100%;
-}
+        /* 照片墙网格 */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+            width: 100%;
+        }
 
-/* 2. 每一个照片卡片的精美样式 */
-.album-item {
-    position: relative; /* 为接下来的文字绝对定位做锚点 */
-    border-radius: 12px;
-    overflow: hidden; /* 极其重要！剪裁掉照片超出圆角的部分 */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    background-color: var(--bg-box); /* 联动你之前的白天暗黑变量色 */
-    aspect-ratio: 4 / 3; /* 强制所有照片卡片统一为 4:3 的黄金比例，排版极度舒适 */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+        .album-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background-color: var(--bg-box);
+            aspect-ratio: 4 / 3;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-/* 3. 操控卡片内的图片本身 */
-.album-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 核心魔法：图片自动等比例裁剪填充，绝对不会被拉伸变形！ */
-    transition: transform 0.5s ease;
-}
+        .album-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
 
-/* ✨ 4. 微交互特效：鼠标悬浮时，照片微微放大，卡片往上漂浮 */
-.album-item:hover {
-    transform: translateY(-5px); /* 往上飘 5 像素 */
-    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-}
-.album-item:hover img {
-    transform: scale(1.08); /* 图片微微放大 1.08 倍，产生镜头拉近感 */
-}
+        .album-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .album-item:hover img {
+            transform: scale(1.08);
+        }
 
-/* 🌌 5. 照片底部的半透明文字条 */
-.album-info {
-    position: absolute;
-    bottom: 0; left: 0; width: 100%;
-    background: rgba(0, 0, 0, 0.6); /* 黑色半透明 */
-    color: #ffffff;
-    padding: 10px;
-    box-sizing: border-box;
-    font-size: 13px;
-    text-align: left;
-    
-    /* 初始状态：让文字条向下隐身 */
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-}
+        .album-info {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            color: #ffffff;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 13px;
+            text-align: left;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
 
-/* 鼠标悬浮在卡片上时，文字条平滑向上滑出 */
-.album-item:hover .album-info {
-    transform: translateY(0);
-}
-       
-       
+        .album-item:hover .album-info {
+            transform: translateY(0);
+        }
        
         body.dark {
             --bg-card: rgba(25, 25, 25, 0.85);    /* 深色磨砂黑卡片 */
             --bg-box: rgba(40, 40, 40, 0.85);     /* 深色小盒子 */
-            --text-main: #e5e5e5;                 /* 护眼暗夜白主字 */
-            --text-sub: #999999;                  /* 护眼暗夜灰副字 */
+            --text-main: #e5e5e5;                  /* 护眼暗夜白主字 */
+            --text-sub: #999999;                   /* 护眼暗夜灰副字 */
             --line-color: rgba(255, 255, 255, 0.15);/* 深色分割线 */
-            --modal-bg: #222222;                  /* 深色弹窗背景 */
+            --modal-bg: #222222;                   /* 深色弹窗背景 */
             --sidebar-bg: rgba(20, 20, 20, 0.95);  /* 深色侧边栏 */
             --sidebar-hover: rgba(255, 255, 255, 0.1); /* 深色侧边栏悬浮 */
         }
 
-        /* 核心布局：允许页面自然滚动 */
         body {
             margin: 0;
             padding: 0;
@@ -125,8 +245,6 @@
             filter: brightness(0.45) contrast(1.1);
         }
 
-        /* 🚪 2. 侧边栏核心 CSS 样式 */
-        /* 触发按钮（左上角悬浮三道杠） */
         .sidebar-toggle {
             position: fixed;
             top: 25px;
@@ -149,11 +267,10 @@
             transform: scale(1.1);
         }
 
-        /* 侧边栏本体 */
         .sidebar {
             position: fixed;
             top: 0;
-            left: -280px; /* 初始隐藏在屏幕左侧外面 */
+            left: -280px;
             width: 280px;
             height: 100%;
             background-color: var(--sidebar-bg);
@@ -164,16 +281,13 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            /* 平滑拉开和收起的动画关键 */
             transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s;
         }
 
-        /* 当激活时，将其拉回屏幕内 */
         .sidebar.active {
             left: 0;
         }
 
-        /* 侧边栏顶部的关闭按钮 */
         .sidebar-close {
             align-self: flex-end;
             background: none;
@@ -184,7 +298,6 @@
             margin-bottom: 20px;
         }
 
-        /* 侧边栏导航链接选项 */
         .sidebar-menu-item {
             display: flex;
             align-items: center;
@@ -199,14 +312,13 @@
         }
         .sidebar-menu-item:hover {
             background-color: var(--sidebar-hover);
-            padding-left: 25px; /* 悬浮时有个向右微微滑动的微动效 */
+            padding-left: 25px;
         }
         .sidebar-menu-item.active {
             background-color: var(--text-main);
-            color: var(--modal-bg); /* 高亮当前选中的页面 */
+            color: var(--modal-bg);
         }
 
-        /* 点击侧边栏拉开时，网页主体后面加一层半透明遮罩，点击遮罩能缩回侧栏 */
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -221,15 +333,13 @@
             pointer-events: auto;
         }
 
-        /* 📄 3. 页面内容多档切换布局 */
         .page-content {
-            display: none; /* 默认所有子页面都隐藏 */
+            display: none;
         }
         .page-content.active {
-            display: block; /* 只有加上 active 类的页面才显示 */
+            display: block;
         }
 
-        /* 大卡片 */
         .profile-card {
             position: relative; 
             text-align: center;
@@ -260,7 +370,6 @@
             transform: scale(1.15); 
         }
 
-        /* 头像强制正圆 */
         .avatar {
             width: 150px;
             height: 150px;
@@ -276,7 +385,6 @@
             border-color: #444; 
         }
 
-        /* 介绍板块横向并排且等宽 */
         .sections-container {
             display: flex !important;
             flex-direction: row !important; 
@@ -287,7 +395,6 @@
             width: 100%;
         }
 
-        /* 小盒子 */
         .section-box {
             background-color: var(--bg-box);
             padding: 20px;
@@ -347,14 +454,12 @@
             background-color: #aaa; 
         }
 
-        /* 留言板区域 */
         .comment-area {
             width: 100%;
             margin-top: 40px;
             text-align: left;
         }
 
-        /* 弹窗遮罩 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -365,7 +470,6 @@
             z-index: 99998 !important; 
         }
 
-        /* 弹窗内容 */
         .modal-box {
             background-color: var(--modal-bg);
             padding: 30px;
@@ -409,7 +513,6 @@
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-
     <div class="profile-card">
         <button id="dark-mode-toggle" title="切换主题">🌙</button>
 
@@ -451,53 +554,107 @@
         <div id="page-album" class="page-content">
             <h2 style="margin-top:0;">🖼️ 我的相册集</h2>
             <p style="color: var(--text-sub);">这里用来存放生活碎片和喜欢的插画...</p>
-        <div class="album-grid">
-            <div class="album-item">
-               <img src="images/game-paluworld1.png" alt="暗巫猫">
-               <div class="album-info">
-                <span>和暗巫猫</span>
+            <div class="album-grid">
+                <div class="album-item">
+                   <img src="images/game-paluworld1.png" alt="暗巫猫">
+                   <div class="album-info">
+                    <span>和暗巫猫</span>
+                   </div>
                </div>
-           </div>
 
-           <div class="album-item">
-            <img src="images/life1.png" alt="潮汕牛肉自助20260206">
-            <div class="album-info">
-                <span>和朋友吃的潮汕牛肉自助</span>
-            </div>
-           </div>
+               <div class="album-item">
+                <img src="images/life1.png" alt="潮汕牛肉自助20260206">
+                <div class="album-info">
+                    <span>和朋友吃的潮汕牛肉自助</span>
+                </div>
+               </div>
 
-           <div class="album-item">
-            <img src="images/pic1.png" alt="x画师">
-            <div class="album-info">
-                <span>❤️</span>
-            </div>
-           </div>
+               <div class="album-item">
+                <img src="images/pic1.png" alt="x画师">
+                <div class="album-info">
+                    <span>❤️</span>
+                </div>
+               </div>
 
-           <div class="album-item">
-            <img src="images/pic2.png" alt="peipei">
-            <div class="album-info">
-                <span>佩佩生贺</span>
+               <div class="album-item">
+                <img src="images/pic2.png" alt="peipei">
+                <div class="album-info">
+                    <span>佩佩生贺</span>
+                </div>
+               </div>
             </div>
-           </div>
-        </div>
         </div>
 
         <div id="page-favorite" class="page-content">
             <h2 style="margin-top:0;">⭐ 兴趣收藏与安利</h2>
             <p style="color: var(--text-sub);">安利一些自己喜欢的轻小说、神作 Galgame、漫画或音乐。</p>
-            <div class="sections-container">
+            <div class="sections-container" style="margin-top: 20px;">
                 <div class="section-box">
                     <strong>📖 轻小说 / 漫画</strong>
-                    <p style="margin: 5px 0 0 0; font-size:13px; color: var(--text-sub);">等填坑中...</p>
-                </div>
-                <div class="section-box">
+                    <p style= "font-size:13px; color: var(--text-sub);margin: 5px 0 15px 0;">简单推荐</p>
+
+                    <div class="book-list">
+                        <div class="book-item">
+                            <span>1. 勇者再次启程</span>
+                            <button class="view-detail-btn" data-title="《勇者再次启程》" data-cover="images/comic1.png" data-review="观感不错的轮回系，作者经常会埋伏笔和很精彩的转折，画风不错，人物好看">查看感受 ➔</button>
+                        </div>
+                        
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>2. 午夜心旋律</span>
+                            <button class="view-detail-btn" data-title="《午夜心旋律》" data-cover="images/comic2.png" data-review="《川柳少女》作者，读起来可能有点幽默成分在。党争，画风很不错，人物很好看，印象最深的是男主，超人般的行动力和情商。">查看感受 ➔</button>
+                        </div>
+
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>3. 19。</span>
+                            <button class="view-detail-btn" data-title="《19.》" data-cover="images/comic3.png" data-review="即将长大的少男少女面对青春人际关系与情感又会有怎样的思考，画风好看，有些情节的细节上差些火候，但是是值得一看的佳作。">查看感受 ➔</button>
+                        </div>
+
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>4. 离巢的魔王城</span>
+                            <button class="view-detail-btn" data-title="《离巢的魔王城》" data-cover="images/comic4.png" data-review="群像类轻幽默喜剧，魔王和勇者一起经营主角的店铺。画风好看，观感很好。">查看感受 ➔</button>
+                        </div>
+
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>5. 保知矢同学绰绰有余</span>
+                            <button class="view-detail-btn" data-title="《保知矢同学绰绰有余》" data-cover="images/comic5.png" data-review="校园恋爱漫，但不是工业糖精。二人的互动很有趣，吃货小胖妹可爱捏">查看感受 ➔</button>
+                        </div>
+
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>6. 黄金侠</span>
+                            <button class="view-detail-btn" data-title="《黄金侠》" data-cover="images/comic6.png" data-review="有点特摄风格的漫画，剧情蛮有趣的，画风不错。但是依旧主角失忆（">查看感受 ➔</button>
+                        </div>
+
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>7. 阿伦马克</span>
+                            <button class="view-detail-btn" data-title="《阿伦马克》" data-cover="images/comic7.png" data-review="正统魔法冒险主题，以一名曾是佣兵的少年视角展开全新的生活。剧情精彩，优秀。">查看感受 ➔</button>
+                        </div>
+                        
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>8. 魔男伊奇</span>
+                            <button class="view-detail-btn" data-title="《魔男伊奇》" data-cover="images/comic8.png" data-review="有魔女怎么没有魔男？奇幻魔法冒险主题，很强的作画+原作组合。值得一看。">查看感受 ➔</button>
+                        </div>
+                    </div>
+                </div> <div class="section-box">
                     <strong>🎮 游戏安利</strong>
                     <p style="margin: 5px 0 0 0; font-size:13px; color: var(--text-sub);">等填坑中...</p>
                 </div>
+            </div> <div id="book-modal" class="book-modal-overlay">
+                <div class="book-modal-box">
+                    <button id="book-modal-close">×</button>
+                    <div class="book-modal-content">
+                        <div class="book-modal-left">
+                            <img id="modal-book-cover" src="" alt="书籍封面">
+                        </div>
+                        <div class="book-modal-right">
+                            <h3 id="modal-book-title">书名加载中...</h3>
+                            <div class="review-text-box">
+                                <p id="modal-book-review">阅读感受加载中...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="comment-area">
+        </div> <div class="comment-area">
             <hr style="border: 0; border-top: 1px solid var(--line-color); margin-bottom: 20px; transition: border-color 0.4s;">
             <h3 style="margin-bottom: 15px;">✍️ 交流留言板</h3>
             <p style="font-size: 14px; margin-top: -10px; margin-bottom: 20px; transition: color 0.4s;">
@@ -563,7 +720,6 @@
             if (termPassed > 100) termPassed = 100; 
             if (termPassed < 0) termPassed = 0;
 
-            // 只有当对应的 DOM 节点存在时才赋值，防止切页面后报错
             const yp = document.getElementById('year-progress');
             if(yp) {
                 yp.value = yearPassed;
@@ -613,8 +769,7 @@
             iframe.contentWindow.postMessage({ type: 'set-theme', theme: theme }, 'https://utteranc.es');
         }
 
-
-        // 🚪 4. 侧边栏与多页面切换的极简前端路由 JavaScript 逻辑
+        // 🚪 侧边栏与多页面切换
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
         const openBtn = document.getElementById('menu-open-btn');
@@ -622,30 +777,24 @@
         const menuItems = document.querySelectorAll('.sidebar-menu-item');
         const pages = document.querySelectorAll('.page-content');
 
-        // 打开侧边栏
         openBtn.addEventListener('click', () => {
             sidebar.classList.add('active');
             sidebarOverlay.classList.add('active');
         });
 
-        // 关闭侧边栏函数
         function closeSidebar() {
             sidebar.classList.remove('active');
             sidebarOverlay.classList.remove('active');
         }
         closeBtn.addEventListener('click', closeSidebar);
-        sidebarOverlay.addEventListener('click', closeSidebar); // 点击空白阴影处也能收回
+        sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // 页面点击切换的核心逻辑
-        menuItems.forEach(item => {
+        menuItems。forEach(item => {
             item.addEventListener('click', (e) => {
-                e.preventDefault(); // 阻止 <a> 标签默认的刷新跳转行为
-
-                // 1. 改变菜单高亮项
+                e.preventDefault();
                 menuItems.forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
 
-                // 2. 切除当前旧网页，显示选中的新网页内容
                 const targetPageId = item.getAttribute('data-target');
                 pages.forEach(page => {
                     page.classList.remove('active');
@@ -653,11 +802,42 @@
                         page.classList.add('active');
                     }
                 });
-
-                // 3. 选完菜单后，侧边栏自动缩回去
                 closeSidebar();
             });
+        });
+
+        // 📚 修复处：将弹窗 JS 逻辑集中，确保在 DOM 元素存在时完美执行
+        const bookModal = document.getElementById('book-modal');
+        const bookModalClose = document.getElementById('book-modal-close');
+        const modalCover = document.getElementById('modal-book-cover');
+        const modalTitle = document.getElementById('modal-book-title');
+        const modalReview = document.getElementById('modal-book-review');
+        const viewDetailBtns = document.querySelectorAll('.view-detail-btn');
+
+        viewDetailBtns。forEach(btn => {
+            btn.addEventListener('click', () => {
+                const title = btn.getAttribute('data-title');
+                const cover = btn.getAttribute('data-cover');
+                const review = btn.getAttribute('data-review');
+
+                modalTitle.innerText = title;
+                modalCover.src = cover;
+                modalReview.innerText = review;
+
+                bookModal.classList.add('active');
+            });
+        });
+
+        bookModalClose.addEventListener('click', () => {
+            bookModal.classList.remove('active');
+        });
+
+        bookModal.addEventListener('click', (e) => {
+            if (e.target === bookModal) {
+                bookModal.classList.remove('active');
+            }
         });
     </script>
 </body>
 </html>
+  
