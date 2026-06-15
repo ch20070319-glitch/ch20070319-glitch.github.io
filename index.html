@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,60 @@
 
     <style>
         /* 💡 1. 核心色彩变量与书籍排版样式 */
-        。book-item {
+        :root {
+            --bg-card: rgba(255, 255, 255, 0.85); /* 浅色模式大卡片 */
+            --bg-box: rgba(255, 255, 255, 0.9);   /* 浅色模式小盒子 */
+            --text-main: #333333;                  /* 浅色主文字 */
+            --text-sub: #666666;                   /* 浅色副文字 */
+            --line-color: rgba(0, 0, 0, 0.1);     /* 浅色分割线 */
+            --modal-bg: white;                    /* 浅色弹窗背景 */
+            --sidebar-bg: rgba(255, 255, 255, 0.95); /* 浅色侧边栏 */
+            --sidebar-hover: rgba(0, 0, 0, 0.05);  /* 侧边栏选项悬浮 */
+        }
+
+        body.dark {
+            --bg-card: rgba(25, 25, 25, 0.85);    /* 深色磨砂黑卡片 */
+            --bg-box: rgba(40, 40, 40, 0.85);     /* 深色小盒子 */
+            --text-main: #e5e5e5;                  /* 护眼暗夜白主字 */
+            --text-sub: #999999;                   /* 护眼暗夜灰副字 */
+            --line-color: rgba(255, 255, 255, 0.15);/* 深色分割线 */
+            --modal-bg: #222222;                   /* 深色弹窗背景 */
+            --sidebar-bg: rgba(20, 20, 20, 0.95);  /* 深色侧边栏 */
+            --sidebar-hover: rgba(255, 255, 255, 0.1); /* 深色侧边栏悬浮 */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            box-sizing: border-box;
+            padding: 60px 20px; 
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            position: relative;
+            color: var(--text-main);
+            transition: background-color 0.4s, color 0.4s;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+            transition: filter 0.4s;
+        }
+        
+        body.dark::before {
+            filter: brightness(0.45) contrast(1.1);
+        }
+
+        .book-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -22,7 +75,7 @@
         }
 
         /* 查看详情按钮样式 */
-        。view-detail-btn {
+        .view-detail-btn {
             background-color: var(--text-main);
             color: var(--modal-bg);
             border: none;
@@ -32,17 +85,17 @@
             cursor: pointer;
             transition: opacity 0.2s;
         }
-        。view-detail-btn:hover {
+        .view-detail-btn:hover {
             opacity: 0.8;
         }
 
-        /* 📥 书评弹窗大遮罩（默认隐藏 display: none） */
+        /* 📥 书评弹窗大遮罩 */
         .book-modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px); /* 磨砂玻璃背景特效 */
-            display: none; /* 初始隐藏 */
+            backdrop-filter: blur(5px);
+            display: none; 
             justify-content: center;
             align-items: center;
             z-index: 10001; /* 层级一定要比播放器和侧边栏更高 */
@@ -62,7 +115,7 @@
             padding: 30px;
             position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            animation: modalFadeIn 0.3s ease; /* 弹窗弹出的丝滑动画 */
+            animation: modalFadeIn 0.3s ease;
         }
 
         @keyframes modalFadeIn {
@@ -79,17 +132,17 @@
             color: var(--text-main);
         }
 
-        /* 💡 核心：左右并排布局 */
+        /* 左右并排布局 */
         .book-modal-content {
             display: flex;
-            flex-direction: row; /* 横向排列 */
+            flex-direction: row;
             gap: 25px;
             margin-top: 15px;
         }
 
         /* 左侧封面容器 */
         .book-modal-left {
-            flex: 2; /* 占 2 份宽度 */
+            flex: 2;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -104,7 +157,7 @@
 
         /* 右侧文字内容容器 */
         .book-modal-right {
-            flex: 3; /* 占 3 份宽度 */
+            flex: 3;
             display: flex;
             flex-direction: column;
             text-align: left;
@@ -115,7 +168,7 @@
             color: var(--text-main);
         }
 
-        /* 右侧的文字框（阅读感受） */
+        /* 右侧的文字框 */
         .review-text-box {
             background-color: rgba(0,0,0,0.03);
             padding: 15px;
@@ -123,7 +176,7 @@
             font-size: 14px;
             line-height: 1.6;
             color: var(--text-main);
-            flex-grow: 1; /* 让文字框自动填满剩余高度 */
+            flex-grow: 1;
             border: 1px solid var(--line-color);
         }
         body.dark .review-text-box {
@@ -139,17 +192,6 @@
             .book-modal-left img {
                 max-width: 130px;
             }
-        }
-        
-        :root {
-            --bg-card: rgba(255, 255, 255, 0.85); /* 浅色模式大卡片 */
-            --bg-box: rgba(255, 255, 255, 0.9);   /* 浅色模式小盒子 */
-            --text-main: #333333;                  /* 浅色主文字 */
-            --text-sub: #666666;                   /* 浅色副文字 */
-            --line-color: rgba(0, 0, 0, 0.1);     /* 浅色分割线 */
-            --modal-bg: white;                    /* 浅色弹窗背景 */
-            --sidebar-bg: rgba(255, 255, 255, 0.95); /* 浅色侧边栏 */
-            --sidebar-hover: rgba(0, 0, 0, 0.05);  /* 侧边栏选项悬浮 */
         }
 
         /* 照片墙网格 */
@@ -201,48 +243,6 @@
 
         .album-item:hover .album-info {
             transform: translateY(0);
-        }
-       
-        body.dark {
-            --bg-card: rgba(25, 25, 25, 0.85);    /* 深色磨砂黑卡片 */
-            --bg-box: rgba(40, 40, 40, 0.85);     /* 深色小盒子 */
-            --text-main: #e5e5e5;                  /* 护眼暗夜白主字 */
-            --text-sub: #999999;                   /* 护眼暗夜灰副字 */
-            --line-color: rgba(255, 255, 255, 0.15);/* 深色分割线 */
-            --modal-bg: #222222;                   /* 深色弹窗背景 */
-            --sidebar-bg: rgba(20, 20, 20, 0.95);  /* 深色侧边栏 */
-            --sidebar-hover: rgba(255, 255, 255, 0.1); /* 深色侧边栏悬浮 */
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; 
-            box-sizing: border-box;
-            padding: 60px 20px; 
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            position: relative;
-            color: var(--text-main);
-            transition: background-color 0.4s, color 0.4s;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('background.png');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.3;
-            z-index: -1;
-            transition: filter 0.4s;
-        }
-        
-        body.dark::before {
-            filter: brightness(0.45) contrast(1.1);
         }
 
         .sidebar-toggle {
@@ -393,6 +393,13 @@
             gap: 20px;
             margin-top: 35px;
             width: 100%;
+        }
+
+        /* 兼容手机端的区块布局转换 */
+        @media (max-width: 768px) {
+            .sections-container {
+                flex-direction: column !important;
+            }
         }
 
         .section-box {
@@ -596,7 +603,7 @@
                     <div class="book-list">
                         <div class="book-item">
                             <span>1. 勇者再次启程</span>
-                            <button class="view-detail-btn" data-title="《勇者再次启程》" data-cover="images/comic1.png" data-review="观感不错的轮回系，作者经常会埋伏笔和很精彩的转折，画风不错，人物好看">查看感受 ➔</button>
+                            <button class="view-detail-btn" data-title="《勇者再次启程》" data-cover="images/comic1.png" data-review="观感不错的轮回系，作者经常会埋伏伏笔和很精彩的转折，画风不错，人物好看">查看感受 ➔</button>
                         </div>
                         
                         <div class="book-item" style="margin-top: 10px;">
@@ -634,27 +641,15 @@
                             <button class="view-detail-btn" data-title="《魔男伊奇》" data-cover="images/comic8.png" data-review="有魔女怎么没有魔男？奇幻魔法冒险主题，很强的作画+原作组合。值得一看。">查看感受 ➔</button>
                         </div>
                     </div>
-                </div> <div class="section-box">
+                </div> 
+                <div class="section-box">
                     <strong>🎮 游戏安利</strong>
                     <p style="margin: 5px 0 0 0; font-size:13px; color: var(--text-sub);">等填坑中...</p>
                 </div>
-            </div> <div id="book-modal" class="book-modal-overlay">
-                <div class="book-modal-box">
-                    <button id="book-modal-close">×</button>
-                    <div class="book-modal-content">
-                        <div class="book-modal-left">
-                            <img id="modal-book-cover" src="" alt="书籍封面">
-                        </div>
-                        <div class="book-modal-right">
-                            <h3 id="modal-book-title">书名加载中...</h3>
-                            <div class="review-text-box">
-                                <p id="modal-book-review">阅读感受加载中...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> <div class="comment-area">
+            </div> 
+        </div> 
+
+        <div class="comment-area">
             <hr style="border: 0; border-top: 1px solid var(--line-color); margin-bottom: 20px; transition: border-color 0.4s;">
             <h3 style="margin-bottom: 15px;">✍️ 交流留言板</h3>
             <p style="font-size: 14px; margin-top: -10px; margin-bottom: 20px; transition: color 0.4s;">
@@ -668,6 +663,23 @@
                     crossorigin="anonymous"
                     async>
             </script>
+        </div>
+    </div>
+
+    <div id="book-modal" class="book-modal-overlay">
+        <div class="book-modal-box">
+            <button id="book-modal-close">×</button>
+            <div class="book-modal-content">
+                <div class="book-modal-left">
+                    <img id="modal-book-cover" src="" alt="书籍封面">
+                </div>
+                <div class="book-modal-right">
+                    <h3 id="modal-book-title">书名加载中...</h3>
+                    <div class="review-text-box">
+                        <p id="modal-book-review">阅读感受加载中...</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -742,6 +754,8 @@
         } else {
             toggleBtn.innerText = '🌙';
         }
+        
+        // 🛠️ 修复：首次打开页面时，也对播放器执行主题同步
         syncPlayerTheme();
 
         toggleBtn.addEventListener('click', () => {
@@ -769,7 +783,7 @@
             iframe.contentWindow.postMessage({ type: 'set-theme', theme: theme }, 'https://utteranc.es');
         }
 
-        // 🚪 侧边栏与多页面切换
+        // 门 侧边栏与多页面切换
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
         const openBtn = document.getElementById('menu-open-btn');
@@ -789,7 +803,7 @@
         closeBtn.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        menuItems。forEach(item => {
+        menuItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 menuItems.forEach(i => i.classList.remove('active'));
@@ -806,7 +820,7 @@
             });
         });
 
-        // 📚 修复处：将弹窗 JS 逻辑集中，确保在 DOM 元素存在时完美执行
+        // 📚 书籍详情弹窗控制
         const bookModal = document.getElementById('book-modal');
         const bookModalClose = document.getElementById('book-modal-close');
         const modalCover = document.getElementById('modal-book-cover');
@@ -814,7 +828,7 @@
         const modalReview = document.getElementById('modal-book-review');
         const viewDetailBtns = document.querySelectorAll('.view-detail-btn');
 
-        viewDetailBtns。forEach(btn => {
+        viewDetailBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const title = btn.getAttribute('data-title');
                 const cover = btn.getAttribute('data-cover');
@@ -840,4 +854,3 @@
     </script>
 </body>
 </html>
-  
