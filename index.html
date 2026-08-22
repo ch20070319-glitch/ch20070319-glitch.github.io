@@ -89,7 +89,7 @@
             opacity: 0.8;
         }
 
-        
+        /* 📥 书评弹窗大遮罩 */
         .book-modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -98,7 +98,7 @@
             display: none; 
             justify-content: center;
             align-items: center;
-            z-index: 10001; 
+            z-index: 10001;
         }
 
         /* 弹窗激活时的显示状态 */
@@ -106,7 +106,7 @@
             display: flex;
         }
 
-        /* 弹窗白色/黑色主体大卡片 */
+        /* 弹窗主体卡片 */
         .book-modal-box {
             background-color: var(--modal-bg);
             width: 90%;
@@ -132,7 +132,7 @@
             color: var(--text-main);
         }
 
-        
+        /* 左右并排布局 */
         .book-modal-content {
             display: flex;
             flex-direction: row;
@@ -140,7 +140,7 @@
             margin-top: 15px;
         }
 
-       
+        /* 左侧封面容器 */
         .book-modal-left {
             flex: 2;
             display: flex;
@@ -155,7 +155,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        
+        /* 右侧文字内容容器 */
         .book-modal-right {
             flex: 3;
             display: flex;
@@ -168,7 +168,7 @@
             color: var(--text-main);
         }
 
-        
+        /* 右侧的文字框 */
         .review-text-box {
             background-color: rgba(0,0,0,0.03);
             padding: 15px;
@@ -395,7 +395,6 @@
             width: 100%;
         }
 
-        /* 兼容手机端的区块布局转换 */
         @media (max-width: 768px) {
             .sections-container {
                 flex-direction: column !important;
@@ -467,6 +466,7 @@
             text-align: left;
         }
 
+        /* 修复2: 调整欢迎弹窗样式，确保其位于最高层 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -474,7 +474,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 99998 !important; 
+            z-index: 100000 !important; 
         }
 
         .modal-box {
@@ -483,7 +483,7 @@
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            z-index: 99999 !important;
+            z-index: 100001 !important;
             transition: background-color 0.4s;
         }
 
@@ -509,6 +509,15 @@
 </head>
 <body>
 
+    <!-- 修复2: 将欢迎弹窗提升到最前方放置 -->
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>欢迎来到 hot chocolate 的个人网站</h2>
+            <p>为了获得最佳体验，建议开启背景音乐 🎵</p>
+            <button id="entry-btn">进入网站</button>
+        </div>
+    </div>
+
     <button class="sidebar-toggle" id="menu-open-btn" title="打开菜单">☰</button>
 
     <div class="sidebar" id="sidebar">
@@ -524,14 +533,14 @@
         <button id="dark-mode-toggle" title="切换主题">🌙</button>
 
         <div id="page-home" class="page-content active">
-            <img id="avatar" src="avatar.png" alt="我的头像" class="avatar">
+            <img id="avatar" src="小陈1.png" alt="我的头像" class="avatar">
             <h1>我是Asker</h1>
             <p style="color: var(--text-sub); margin-top: -5px; transition: color 0.4s;">这是我的第一个个人网站</p>
             
             <div class="sections-container">
                 <div class="section-box">
                     <div>
-                        <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大二新生。</p>
+                        <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大二学生。</p>
                     </div>
                     
                     <div class="progress-wrapper">
@@ -550,10 +559,13 @@
                 </div>
 
                 <div class="section-box">
-                    <p style="margin: 0;">今年19，男，目前绝赞暑假享受中</p>
+                    <p style="margin: 0;">今年19，身心男，Infp-t</p>
                 </div>
                 <div class="section-box">
-                    <p style="margin: 0;">喜欢玩卡牌策略类Roguelike ，节奏音乐类以及推理解密类游戏。偶尔会跟朋友一起玩派对类游戏。最近打算尝试玩 Gal。平时也喜欢听音乐，看漫画，轻小说。喜欢喝绿茶。</p>
+                    <p style="margin: 0;">平时喜欢玩卡牌Roguelike（爬塔，超时空方舟，怪物火车，星之侵略者...） ，节奏音乐类（maimai，orzmic，paradigram：reboot）以及推理解密类游戏（最近在推谋杀谜案悖论）。偶尔会跟朋友一起玩派对类游戏。</p>
+                </div>
+                <div class="section-box">
+                    <p style="margin: 0;">喜欢听音乐，看漫画，轻小说。喜欢喝绿茶。讨厌芹菜。</p>
                 </div>
             </div>
         </div>
@@ -589,16 +601,59 @@
                     <span>佩佩生贺</span>
                 </div>
                </div>
+
+               <div class="album-item">
+                <img src="images/安堂.png" alt="antang">
+                <div class="album-info">
+                    <span>安堂</span>
+               </div>
+            </div>
+
+            <div class="album-item">
+                <img src="images/随便拍拍.png" alt="dafengshan">
+                <div class="album-info">
+                    <span>神秘风扇</span>
+                </div>
+            </div>
+
+            <div class="album-item">
+                <img src="images/插图1.png" alt="chahua">
+                <div class="album-info">
+                    <span>requester</span>
+             </div>
+             </div>
+
+            <div class="album-item">
+                <img src="images/洛茜宝贝.png" alt="mama">
+                <div class="album-info">
+                    <span>洛茜</span>
+                </div>
+            </div>
+            
+            <div class="album-item">
+                <img src="images/追猎13连打1.png" alt="jipi">
+                <div class="album-info">
+                    <span>N15追猎13连打</span>
+                </div>
+            </div>
+
+
+
+
+
+               
             </div>
         </div>
 
         <div id="page-favorite" class="page-content">
             <h2 style="margin-top:0;">⭐ 兴趣收藏与安利</h2>
             <p style="color: var(--text-sub);">安利一些自己喜欢的轻小说、神作 Galgame、漫画或音乐。</p>
-            <div class="sections-container" style="margin-top: 20px;">
+            
+            <!-- 修复1: 添加 align-items: flex-start 强制顶部对齐，使轻小说与漫画等高起点，下方自然留白 -->
+            <div class="sections-container" style="margin-top: 20px; align-items: flex-start;">
                 <div class="section-box">
                     <strong>漫画推荐</strong>
-                    <p style= "font-size:13px; color: var(--text-sub);margin: 5px 0 15px 0;">简单推荐</p>
+                    <p style="font-size:13px; color: var(--text-sub);margin: 5px 0 15px 0;">简单推荐</p>
 
                     <div class="book-list">
                         <div class="book-item">
@@ -642,43 +697,59 @@
                         </div>
                     </div>
                 </div> 
+
                 <div class="section-box">
                     <strong>轻小说推荐</strong>
                     <p style="font-size:13px; color: var(--text-sub);margin: 5px 0 15px 0;">私藏书单</p>
-                <div class="book-list">
+                    <div class="book-list">
+                        <div class="book-item">
+                            <span>1. 放学后，到异世界咖啡店喝杯咖啡</span>
+                            <button class="view-detail-btn" data-title="《放学后，到异世界咖啡店喝杯咖啡》" data-cover="images/lightnovel1.png" data-review="神作。温暖的故事可以融化异乡人心中的不安，与世界建立联系，认识不同的人，就已经是存在的证明。值得阅读。">查看感受 ➔</button>
+                        </div>
 
-                    <div class="book-item">
-                        <sapn>1.放学后，到异世界咖啡店喝杯咖啡</sapn>
-                        <button class="view-detail-btn" data-title="《放学后，到异世界咖啡店喝杯咖啡》" data-cover="images/lightnovel1.png" data-review="神作。温暖的故事可以融化异乡人心中的不安，与世界建立联系，认识不同的人，就已经是存在的证明。值得阅读。">查看感受 ➔</button>
-                    </div>
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>2. 你的解谜由我作答</span>
+                            <button class="view-detail-btn" data-title="《你的解谜由我作答》" data-cover="images/lightnovel2.png" data-review="轻推理。第二卷的解密很精彩，算是很出色的校园推理典范了。缺点就是毕竟是轻小说，带一点宅味，可以接受的话观感应该不错。">查看感受 ➔</button>
+                        </div>
 
-                <div class="book-item" style="margin-top: 10px;">
-                    <span>2.你的解谜由我作答</span>
-                    <button class="view-detail-btn" data-title="《你的解谜由我作答》" data-cover="images/lightnovel2.png" data-review="轻推理。第二卷的解密很精彩，算是很出色的校园推理典范了。缺点就是毕竟是轻小说，带一点宅味，可以接受的话观感应该不错。">查看感受 ➔</button>
-                </div>
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>3. 德尔塔与伽马的理学部笔记</span>
+                            <button class="view-detail-btn" data-title="《德尔塔与伽马的理学部笔记》" data-cover="images/lightnovel3.png" data-review="2026轻厉第6，个人最近最喜欢的纯爱向小说。本书中作者喜欢穿插一点理科的推理元素在故事中（毕竟叫理学部）。第三卷的解密很有趣，有一点推理小说的意思，同时在结尾将故事从头到尾串联起来，回收伏笔。更有意思的点在于作者一上来还安排了诡叙的设计，也许会让刚读完前作的读者感到不解，但只要读到结尾就知道作者所传达的真正意思了。个人强推，第四卷将于10.9发售">查看感受 ➔</button>
+                        </div>
 
-                <div class="book-item" style="margin-top: 10px;">
-                    <span>3.德尔塔与伽马的理学部笔记</span>
-                    <button class="view-detail-btn" data-title="《德尔塔与伽马的理学部笔记》" data-cover="images/lightnovel3.png" data-review="2026轻厉第6，纯爱。本书带有一点理科的小推理元素在，但我确实吃这种（。第三卷的解密很有趣，依旧将故事串联起来，回收伏笔，还安排了诡叙。强推"。>查看感受 ➔</button>
-                </div>
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>4.格林链接</span>
+                            <button class="view-detail-btn " data-title="《格林链接》" data-cover="images/lightnovel4.png" data-review="将格林童话融入异世界，轮回的元素。主角与牧羊人达成约定，只有通关七个童话世界才能救治好自己的妹妹。本作带有一点点黑深残要素，第一卷观感不错，目前作者已更新至长发公主篇（中）。">查看感受 ➔</button>
+                        </div>
+
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>5.玩乐关系</span>
+                            <button class="view-detail-btn" data-title="《玩乐关系》" data-cover="images/lightnovel5.png" data-review="2026轻厉第一，电玩咖作者新作‘桌游咖’。在第一卷作者就在人物上做了小设计，让读者在最后才理解故事的全貌，采用倒叙展开故事情节。党争恋爱向，但读起来又有一点推理小说的感觉说是，强推。">查看感受 ➔</button>
+                        </div>
+
+                        <div class="book-item" style="margin-top: 10px;">
+                            <span>6.对你保密的七角计划</span>
+                            <button class="view-detail-btn" data-title="《对你保密的七角计划》" data-cover="images/lightnovel6.png" data-review="‘恋爱是错误啊’，有三角四角恋，那有没有七角恋。本作主人公天宫司为了达成某个目的制作了对某人保密的七角恋计划。作者通过分别书写每对箭头间情节的同时留有空白，在最后计划收尾的时候全部串联起来，构成了七角关系。蛮有趣的恋爱物语。">查看感受 ➔</button>
+                        </div>
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="comment-area">
+                <hr style="border: 0; border-top: 1px solid var(--line-color); margin-bottom: 20px; transition: border-color 0.4s;">
+                <h3 style="margin-bottom: 15px;">✍️ 交流留言板</h3>
+                <p style="font-size: 14px; margin-top: -10px; margin-bottom: 20px; transition: color 0.4s;">
+                    If you have any valuable feedback, feel free to drop it in the comment box below—it would be a great help to me!
+                </p>
                 
-            </div> 
-        </div> 
-
-        <div class="comment-area">
-            <hr style="border: 0; border-top: 1px solid var(--line-color); margin-bottom: 20px; transition: border-color 0.4s;">
-            <h3 style="margin-bottom: 15px;">✍️ 交流留言板</h3>
-            <p style="font-size: 14px; margin-top: -10px; margin-bottom: 20px; transition: color 0.4s;">
-                If you have any valuable feedback, feel free to drop it in the comment box below—it would be a great help to me!
-            </p>
-            
-            <script src="https://utteranc.es/client.js"
-                    repo="ch20070319-glitch/ch20070319-glitch.github.io"
-                    issue-term="pathname"
-                    theme="github-light"
-                    crossorigin="anonymous"
-                    async>
-            </script>
+                <script src="https://utteranc.es/client.js"
+                        repo="ch20070319-glitch/ch20070319-glitch.github.io"
+                        issue-term="pathname"
+                        theme="github-light"
+                        crossorigin="anonymous"
+                        async>
+                </script>
+            </div>
         </div>
     </div>
 
@@ -696,14 +767,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div id="welcome-modal" class="modal-overlay">
-        <div class="modal-box">
-            <h2>欢迎来到 hot chocolate 的个人网站</h2>
-            <p>为了获得最佳体验，建议开启背景音乐 🎵</p>
-            <button id="entry-btn">进入网站</button>
         </div>
     </div>
 
@@ -771,7 +834,6 @@
             toggleBtn.innerText = '🌙';
         }
         
-        // 🛠️ 修复：首次打开页面时，也对播放器执行主题同步
         syncPlayerTheme();
 
         toggleBtn.addEventListener('click', () => {
@@ -799,7 +861,7 @@
             iframe.contentWindow.postMessage({ type: 'set-theme', theme: theme }, 'https://utteranc.es');
         }
 
-        // 门 侧边栏与多页面切换
+        // 侧边栏与多页面切换
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
         const openBtn = document.getElementById('menu-open-btn');
