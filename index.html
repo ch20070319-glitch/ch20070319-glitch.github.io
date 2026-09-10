@@ -50,6 +50,8 @@
             display: flex;
             justify-content: center;
             align-items: flex-start; 
+            flex-wrap: wrap;
+            gap: 24px;
             box-sizing: border-box;
             padding: 60px 20px; 
             font-family: "Helvetica Neue", Arial, sans-serif;
@@ -75,30 +77,261 @@
         }
 
         .book-item {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 26px 48px 1fr auto;
             align-items: center;
-            background: rgba(0,0,0,0.02);
-            padding: 10px 15px;
-            border-radius: 8px;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid transparent;
+            transition: transform 0.25s, box-shadow 0.25s, background-color 0.25s, border-color 0.25s;
         }
         body.dark .book-item {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .book-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.75);
+            border-color: color-mix(in srgb, var(--accent, #6c8cff) 40%, transparent);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+        }
+        body.dark .book-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5);
+        }
+        .book-index {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--text-sub);
+            opacity: 0.65;
+            font-variant-numeric: tabular-nums;
+        }
+        .book-cover {
+            width: 48px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+            transition: transform 0.3s;
+        }
+        .book-item:hover .book-cover {
+            transform: scale(1.06) rotate(-1deg);
+        }
+        .book-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+        .book-title {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--text-main);
+        }
+        .book-extra {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+        .rating-stars {
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: #ffb020;
+        }
+        .rating-value {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+        .book-tag {
+            font-size: 11px;
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 999px;
+            color: var(--text-main);
+            background: color-mix(in srgb, var(--accent, #6c8cff) 14%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent, #6c8cff) 28%, transparent);
+        }
+        @media (max-width: 640px) {
+            .book-item {
+                grid-template-columns: 40px 1fr;
+                row-gap: 10px;
+            }
+            .book-index {
+                display: none;
+            }
+            .book-cover {
+                width: 40px;
+                height: 54px;
+            }
+            .book-item .view-detail-btn {
+                grid-column: 1 / -1;
+                justify-self: start;
+            }
         }
 
         /* 查看详情按钮样式 */
         .view-detail-btn {
-            background-color: var(--text-main);
-            color: var(--modal-bg);
-            border: none;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--text-main);
             padding: 6px 12px;
             font-size: 12px;
-            border-radius: 4px;
+            border-radius: 999px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            white-space: nowrap;
+            transition: background-color 0.2s, color 0.2s, transform 0.2s;
         }
         .view-detail-btn:hover {
-            opacity: 0.8;
+            background-color: var(--text-main);
+            color: var(--modal-bg);
+            transform: translateY(-1px);
+        }
+
+        /* ⭐ 收藏页：分类卡片 */
+        .fav-cards {
+            margin-top: 24px !important;
+            align-items: flex-start !important;
+        }
+        .fav-cards > .section-box {
+            --accent: #ff8a3d;
+            position: relative;
+            overflow: hidden;
+            padding: 24px 20px 20px;
+            border-radius: 14px;
+            gap: 0;
+            justify-content: flex-start;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 6px 18px rgba(31, 38, 135, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            transition: background-color 0.4s, border-color 0.4s;
+        }
+        body.dark .fav-cards > .section-box {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+        .fav-cards > .section-box::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+        .fav-sub {
+            margin: 10px 0 16px;
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .book-item.no-cover {
+            grid-template-columns: 26px 1fr auto;
+        }
+        .list-empty {
+            margin: 0;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px dashed var(--line-color);
+            color: var(--text-sub);
+            font-size: 13px;
+            text-align: center;
+        }
+        @media (max-width: 640px) {
+            .book-item.no-cover {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 🎮 fgame 页：Steam 卡片 */
+        .steam-box {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 26px;
+            padding: 24px 22px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 6px 18px rgba(31, 38, 135, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            transition: transform 0.25s, box-shadow 0.25s, background-color 0.4s, border-color 0.4s;
+        }
+        body.dark .steam-box {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+        .steam-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16);
+        }
+        .steam-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 54px;
+            height: 54px;
+            flex: 0 0 54px;
+            border-radius: 14px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #1b2838, #2a475e);
+            box-shadow: 0 6px 16px rgba(27, 40, 56, 0.35);
+        }
+        .steam-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+        .steam-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 0;
+            text-align: left;
+        }
+        .steam-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .steam-sub {
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+        .steam-btn {
+            flex: 0 0 auto;
+            padding: 10px 18px;
+            font-size: 13px;
+            text-decoration: none;
+            color: var(--text-main);
+            border: 1px solid var(--text-main);
+            border-radius: 999px;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .steam-btn:hover {
+            background-color: #66c0f4;
+            border-color: #66c0f4;
+            color: #06202f;
+            transform: translateY(-1px);
+        }
+        @media (max-width: 640px) {
+            .steam-box {
+                flex-direction: column;
+                text-align: center;
+            }
+            .steam-meta {
+                align-items: center;
+                text-align: center;
+            }
         }
 
         /* 📥 书评弹窗大遮罩 */
@@ -195,6 +428,43 @@
             background-color: rgba(255,255,255,0.02);
         }
 
+        /* 弹窗里的评分 / 标签 */
+        .modal-extra {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* 弹窗底部翻页 */
+        .book-modal-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 22px;
+        }
+        .book-nav-btn {
+            flex: 1;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--line-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, transform 0.2s;
+        }
+        body.dark .book-nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .book-nav-btn:hover {
+            background: var(--text-main);
+            color: var(--modal-bg);
+            transform: translateY(-1px);
+        }
+
         /* 📱 手机端自适应响应式 */
         @media (max-width: 600px) {
             .book-modal-content {
@@ -207,54 +477,143 @@
         }
 
         /* 照片墙网格 */
-        .album-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+        /* 🖼️ 相册画廊 */
+        .gallery-viewport {
             margin-top: 25px;
-            width: 100%;
+            height: 65vh;
+            min-height: 420px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px 14px 26px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.32);
+            border: 1px solid var(--line-color);
+            scrollbar-width: thin;
+            scrollbar-color: var(--text-sub) transparent;
+        }
+        body.dark .gallery-viewport {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .gallery-viewport::-webkit-scrollbar {
+            width: 8px;
+        }
+        .gallery-viewport::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .gallery-viewport::-webkit-scrollbar-thumb {
+            background: var(--line-color);
+            border-radius: 999px;
+        }
+        .gallery-viewport:hover::-webkit-scrollbar-thumb {
+            background: var(--text-sub);
         }
 
-        .album-item {
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            grid-auto-rows: 62px;
+            grid-auto-flow: dense;
+            gap: 14px;
+        }
+        @media (max-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                grid-auto-rows: 54px;
+            }
+        }
+        @media (max-width: 640px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-auto-rows: 46px;
+                gap: 10px;
+            }
+            .gallery-viewport {
+                height: 70vh;
+                padding: 10px 10px 20px;
+            }
+        }
+
+        .gallery-item {
             position: relative;
+            margin: 0;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             background-color: var(--bg-box);
-            aspect-ratio: 4 / 3;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            transform: rotate(var(--tilt, 0deg)) translateY(var(--shift, 0px));
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            cursor: zoom-in;
         }
-
-        .album-item img {
+        .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
             transition: transform 0.5s ease;
         }
-
-        .album-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        .gallery-item:hover {
+            transform: rotate(0deg) translateY(calc(var(--shift, 0px) - 6px)) scale(1.02);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+            z-index: 3;
         }
-        .album-item:hover img {
-            transform: scale(1.08);
+        .gallery-item:hover img {
+            transform: scale(1.06);
         }
-
-        .album-info {
+        .gallery-item figcaption {
             position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            color: #ffffff;
-            padding: 10px;
+            left: 0; right: 0; bottom: 0;
+            padding: 10px 12px;
             box-sizing: border-box;
-            font-size: 13px;
+            font-size: 12px;
             text-align: left;
+            color: #ffffff;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
             transform: translateY(100%);
             transition: transform 0.3s ease;
         }
-
-        .album-item:hover .album-info {
+        .gallery-item:hover figcaption {
             transform: translateY(0);
+        }
+
+        /* 🔍 图片灯箱 */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
+            z-index: 100000;
+            cursor: zoom-out;
+        }
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lightbox img {
+            max-width: min(90vw, 1200px);
+            max-height: 78vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.96);
+            transition: transform 0.3s ease;
+        }
+        .lightbox.active img {
+            transform: scale(1);
+        }
+        .lightbox-caption {
+            color: #ffffff;
+            font-size: 14px;
+            opacity: 0.85;
         }
 
         .sidebar-toggle {
@@ -331,6 +690,55 @@
             color: var(--modal-bg);
         }
 
+        /* 🕰️ 侧边栏信息卡：时间 / 日期 / 天气 */
+        .sidebar-info {
+            margin-top: auto;
+            padding: 16px 14px;
+            border-radius: 14px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            box-shadow: 0 6px 18px rgba(31, 38, 135, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px) saturate(150%);
+            -webkit-backdrop-filter: blur(10px) saturate(150%);
+            transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
+        }
+        body.dark .sidebar-info {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+        .info-time {
+            font-family: "DIN Alternate", "Bahnschrift", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            font-size: 30px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-main);
+        }
+        @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+            .info-time {
+                background: linear-gradient(135deg, #6c8cff, #b06cff 55%, #22b8cf);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+        }
+        .info-date {
+            margin-top: 6px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: var(--text-sub);
+        }
+        .info-weather {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--line-color);
+            font-size: 13px;
+            color: var(--text-main);
+        }
+
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -356,14 +764,91 @@
             position: relative; 
             text-align: center;
             padding: 40px;
-            width: 100%;
-            max-width: 850px;        
+            width: 60vw;
+            min-width: 850px;
+            max-width: 1500px;
             height: auto; 
             background-color: var(--bg-card); 
             border-radius: 16px;      
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
             transition: background-color 0.4s, box-shadow 0.4s;
+        }
+
+        @media (max-width: 1024px) {
+            .profile-card {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+
+        /* ✒️ 个性签名卡 */
+        .signature-card {
+            position: absolute;
+            top: 68px;
+            right: 25px;
+            width: 240px;
+            box-sizing: border-box;
+            padding: 26px 18px;
+            border-radius: 16px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 6px 18px rgba(31, 38, 135, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
+            z-index: 5;
+        }
+        @media (max-width: 1024px) {
+            .signature-card {
+                position: static;
+                width: 100%;
+                max-width: 360px;
+                margin: 0 auto 24px;
+                z-index: auto;
+            }
+        }
+        .signature-card.is-hidden {
+            display: none;
+        }
+        body.dark .signature-card {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+        .sig-quote {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 34px;
+            line-height: 1;
+            color: var(--text-sub);
+            opacity: 0.5;
+        }
+        .sig-text {
+            margin: 8px 0 0;
+            font-family: Georgia, "Songti SC", "STSong", "Times New Roman", serif;
+            font-size: 18px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            line-height: 1.9;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+        @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+            .sig-text {
+                background: linear-gradient(135deg, #6c8cff, #b06cff 55%, #22b8cf);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+        }
+        .sig-line {
+            width: 36px;
+            height: 2px;
+            margin: 14px auto 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #6c8cff, #b06cff);
+            opacity: 0.7;
         }
 
         #dark-mode-toggle {
@@ -399,17 +884,27 @@
 
         .sections-container {
             display: flex !important;
-            flex-direction: row !important; 
+            flex-direction: row !important;
             justify-content: center;
-            align-items: stretch; 
+            align-items: stretch;
             gap: 20px;
             margin-top: 35px;
             width: 100%;
         }
 
+        /* 首页：2×2 卡片布局 */
+        .sections-container.home-cards {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
         @media (max-width: 768px) {
             .sections-container {
                 flex-direction: column !important;
+            }
+            .sections-container.home-cards {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -418,7 +913,7 @@
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            flex: 1 !important; 
+            flex: 1 !important;
             text-align: left;
             font-size: 14px;
             line-height: 1.6;
@@ -427,6 +922,148 @@
             flex-direction: column;
             justify-content: space-between;
             transition: background-color 0.4s, box-shadow 0.4s;
+        }
+
+        /* ✨ 首页卡片美化 */
+        .home-cards > .section-box {
+            --accent: #6c8cff;
+            position: relative;
+            overflow: hidden;
+            flex: none;
+            padding: 22px 20px 20px;
+            border-radius: 14px;
+            gap: 10px;
+            justify-content: flex-start;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.4s, box-shadow 0.3s, transform 0.3s;
+        }
+        .home-cards > .section-box::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+        .home-cards > .section-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+        body.dark .home-cards > .section-box:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+        }
+
+        /* 💎 玻璃拟态 + 光斑跟随 */
+        .home-cards > .section-box {
+            --mx: 50%;
+            --my: 0%;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48));
+            backdrop-filter: blur(14px) saturate(160%);
+            -webkit-backdrop-filter: blur(14px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 26px rgba(31, 38, 135, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        body.dark .home-cards > .section-box {
+            background: linear-gradient(160deg, rgba(42, 42, 48, 0.78), rgba(24, 24, 28, 0.6));
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .home-cards > .section-box > * {
+            position: relative;
+            z-index: 1;
+        }
+        .home-cards > .section-box::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.35s;
+            background: radial-gradient(240px circle at var(--mx) var(--my), color-mix(in srgb, var(--accent) 38%, transparent), transparent 70%);
+        }
+        .home-cards > .section-box:hover::after {
+            opacity: 1;
+        }
+        body.dark .home-cards > .section-box::after {
+            background: radial-gradient(240px circle at var(--mx) var(--my), color-mix(in srgb, var(--accent) 32%, transparent), transparent 70%);
+        }
+        .home-cards > .section-box::before {
+            z-index: 2;
+        }
+
+        /* 🖼️ 背景轮播（交叉淡入淡出） */
+        .bg-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            z-index: -1;
+            pointer-events: none;
+            transition: opacity 1.6s ease;
+            will-change: opacity;
+        }
+        .bg-layer.active {
+            opacity: 0.3;
+        }
+        body.dark .bg-layer {
+            filter: brightness(0.45) contrast(1.1);
+        }
+        /* JS 接管后再隐藏静态背景，避免两张图叠加 */
+        body.bg-ready::before {
+            background-image: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .bg-layer {
+                transition: none;
+            }
+        }
+        .box-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .box-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            border-radius: 10px;
+            font-size: 17px;
+            background: color-mix(in srgb, var(--accent) 16%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+        }
+        .box-title {
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+        }
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+        .tag {
+            font-size: 12px;
+            line-height: 1;
+            padding: 6px 10px;
+            border-radius: 999px;
+            color: var(--text-main);
+            background: color-mix(in srgb, var(--accent) 14%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .tag:hover {
+            transform: translateY(-1px);
+            background: color-mix(in srgb, var(--accent) 24%, transparent);
+        }
+        .box-note {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-sub);
         }
 
         .progress-wrapper {
@@ -457,19 +1094,27 @@
         }
         progress::-webkit-progress-bar {
             background-color: #e0e0e0;
-            border-radius: 5px;
+            border-radius: 999px;
             transition: background-color 0.4s;
         }
         body.dark progress::-webkit-progress-bar {
             background-color: #444; 
         }
         progress::-webkit-progress-value {
-            background-color: #333; 
-            border-radius: 5px;
+            background-image: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 45%, #ffffff));
+            border-radius: 999px;
             transition: background-color 0.4s;
         }
-        body.dark progress::-webkit-progress-value {
-            background-color: #aaa; 
+        progress::-moz-progress-bar {
+            background-image: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 45%, #ffffff));
+            border-radius: 999px;
+        }
+        #year-percent, #term-percent {
+            font-weight: 600;
+            color: var(--text-main);
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--accent) 16%, transparent);
         }
 
         .comment-area {
@@ -518,46 +1163,106 @@
             z-index: 10000 !important;
         }
 
-        /* 📮 联系区域 */
-        .contact-box {
-            margin-top: 25px;
-            background-color: var(--bg-box);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: background-color 0.4s, box-shadow 0.4s;
-        }
-        .contact-box p {
-            color: var(--text-sub);
-            font-size: 13px;
-            margin: 6px 0 0;
-        }
-        .contact-links {
+        /* 📮 联系页（与 Home / Album / Favorite 相同的切换页） */
+        .contact-page-box {
             display: flex;
             justify-content: center;
+            align-items: stretch;
             flex-wrap: wrap;
-            gap: 14px;
-            margin-top: 15px;
+            gap: 18px;
+            margin-top: 30px;
+            padding: 30px 20px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            box-shadow: 0 6px 18px rgba(31, 38, 135, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px) saturate(150%);
+            -webkit-backdrop-filter: blur(12px) saturate(150%);
+            transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
         }
-        .contact-btn {
-            display: inline-flex;
+        body.dark .contact-page-box {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+        .contact-item {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 7px;
-            background-color: var(--text-main);
-            color: var(--modal-bg);
+            gap: 10px;
+            min-width: 140px;
+            padding: 22px 18px;
+            border-radius: 14px;
             text-decoration: none;
-            padding: 10px 22px;
-            font-size: 14px;
-            border-radius: 8px;
-            transition: opacity 0.2s;
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--line-color);
+            transition: transform 0.2s, background-color 0.2s, color 0.2s, border-color 0.2s;
         }
-        .contact-btn:hover {
-            opacity: 0.8;
+        body.dark .contact-item {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .contact-item:hover {
+            transform: translateY(-4px);
+            background: var(--text-main);
+            color: var(--modal-bg);
+            border-color: var(--text-main);
+        }
+        .contact-item-icon svg {
+            width: 32px;
+            height: 32px;
+            display: block;
+        }
+        .contact-item-label {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .contact-item-hint {
+            font-size: 11px;
+            color: var(--text-sub);
+            word-break: break-all;
+        }
+        .contact-item:hover .contact-item-hint {
+            color: var(--modal-bg);
+            opacity: 0.85;
+        }
+        .icon-brand {
+            fill: currentColor;
+        }
+        .icon-line {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ⌨️ 打字机效果 */
+        .typing-line {
+            min-height: 1.5em;
+        }
+        .type-cursor {
+            display: inline-block;
+            margin-left: 2px;
+            color: var(--text-main);
+            animation: cursorBlink 1s step-end infinite;
+        }
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .type-cursor {
+                animation: none;
+            }
         }
     </style>
 </head>
 <body>
+
+    <div class="bg-layer" id="bg-layer-a" aria-hidden="true"></div>
+    <div class="bg-layer" id="bg-layer-b" aria-hidden="true"></div>
 
     <!-- 修复2: 将欢迎弹窗提升到最前方放置 -->
     <div id="welcome-modal" class="modal-overlay">
@@ -575,6 +1280,14 @@
         <a href="#" class="sidebar-menu-item active" data-target="page-home">🏠 Home</a>
         <a href="#" class="sidebar-menu-item" data-target="page-album">🖼️ Album</a>
         <a href="#" class="sidebar-menu-item" data-target="page-favorite">⭐ Favorite</a>
+        <a href="#" class="sidebar-menu-item" data-target="page-fgame">🎮 fgame</a>
+        <a href="#" class="sidebar-menu-item" data-target="page-contact">📞 Contact me</a>
+
+        <div class="sidebar-info">
+            <div class="info-time" id="info-time">--:--:--</div>
+            <div class="info-date" id="info-date">加载中…</div>
+            <div class="info-weather" id="info-weather">🌤 天气获取中…</div>
+        </div>
     </div>
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -582,17 +1295,36 @@
     <div class="profile-card">
         <button id="dark-mode-toggle" title="切换主题">🌙</button>
 
+        <aside class="signature-card" aria-label="个性签名">
+            <div class="sig-quote">“</div>
+            <p class="sig-text">search，ask，and get the answer you want</p>
+            <div class="sig-line"></div>
+        </aside>
+
         <div id="page-home" class="page-content active">
             <img id="avatar" src="小陈1.png" alt="我的头像" class="avatar">
             <h1>我是Asker</h1>
-            <p style="color: var(--text-sub); margin-top: -5px; transition: color 0.4s;">这是我的第一个个人网站</p>
+            <p class="typing-line" style="color: var(--text-sub); margin-top: -5px; transition: color 0.4s;"><span id="typewriter" data-phrases="这是我的第一个个人网站|NEU 软件学院大二学生|正在学前端，也在探索 AI 与 Agent">这是我的第一个个人网站</span><span class="type-cursor" aria-hidden="true">|</span></p>
             
-            <div class="sections-container">
-                <div class="section-box">
-                    <div>
-                        <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大二学生。</p>
+            <div class="sections-container home-cards">
+                <div class="section-box" style="--accent: #6c8cff;">
+                    <div class="box-head">
+                        <span class="box-icon">🎓</span>
+                        <span class="box-title">关于我</span>
                     </div>
-                    
+                    <p style="margin: 0;">欢迎来到我的网站，目前是 NEU 软件学院的大二学生。</p>
+                    <div class="tag-list">
+                        <span class="tag">19 岁</span>
+                        <span class="tag">男生</span>
+                        <span class="tag">INFP-T</span>
+                    </div>
+                </div>
+
+                <div class="section-box" style="--accent: #22b8cf;">
+                    <div class="box-head">
+                        <span class="box-icon">⏳</span>
+                        <span class="box-title">时光进度</span>
+                    </div>
                     <div class="progress-wrapper">
                         <div class="progress-title">
                             <span>⏳ 2026 年已逝去</span>
@@ -608,187 +1340,274 @@
                     </div>
                 </div>
 
-                <div class="section-box">
-                    <p style="margin: 0;">今年19，身心男，Infp-t</p>
+                <div class="section-box" style="--accent: #b06cff;">
+                    <div class="box-head">
+                        <span class="box-icon">🎮</span>
+                        <span class="box-title">游戏</span>
+                    </div>
+                    <div class="tag-list">
+                        <span class="tag">卡牌 Roguelike</span>
+                        <span class="tag">杀戮尖塔</span>
+                        <span class="tag">超时空方舟</span>
+                        <span class="tag">怪物火车</span>
+                        <span class="tag">星之侵略者</span>
+                        <span class="tag">maimai</span>
+                        <span class="tag">orzmic</span>
+                        <span class="tag">Paradigm: Reboot</span>
+                        <span class="tag">推理解谜</span>
+                    </div>
+                    <p class="box-note">最近在推《谋杀谜案悖论》，偶尔和朋友一起玩派对类游戏。</p>
                 </div>
-                <div class="section-box">
-                    <p style="margin: 0;">平时喜欢玩卡牌Roguelike（爬塔，超时空方舟，怪物火车，星之侵略者...） ，节奏音乐类（maimai，orzmic，paradigram：reboot）以及推理解密类游戏（最近在推谋杀谜案悖论）。偶尔会跟朋友一起玩派对类游戏。</p>
-                </div>
-                <div class="section-box">
-                    <p style="margin: 0;">喜欢听音乐，看漫画，轻小说。喜欢喝绿茶。讨厌芹菜。</p>
+
+                <div class="section-box" style="--accent: #34c38f;">
+                    <div class="box-head">
+                        <span class="box-icon">🎵</span>
+                        <span class="box-title">音乐与阅读</span>
+                    </div>
+                    <div class="tag-list">
+                        <span class="tag">听音乐</span>
+                        <span class="tag">看漫画</span>
+                        <span class="tag">轻小说</span>
+                        <span class="tag">绿茶</span>
+                    </div>
+                    <p class="box-note">🥬 唯一讨厌的东西是芹菜</p>
                 </div>
             </div>
 
-            <div class="contact-box">
-                <h2 style="margin: 0;">📮 联系我</h2>
-                <p>想交流或合作？欢迎来找我</p>
-                <div class="contact-links">
-                    <a class="contact-btn" href="mailto:chenghao@mails.neu.edu.cn">📧 Email</a>
-                    <a class="contact-btn" href="https://github.com/ch20070319-glitch" target="_blank" rel="noopener noreferrer">GitHub</a>
-                </div>
-            </div>
         </div>
 
         <div id="page-album" class="page-content">
             <h2 style="margin-top:0;">🖼️ 我的相册集</h2>
             <p style="color: var(--text-sub);">这里用来存放生活碎片和喜欢的插画...</p>
-            <div class="album-grid">
-                <div class="album-item">
-                   <img src="images/game-paluworld1.png" alt="暗巫猫">
-                   <div class="album-info">
-                    <span>和暗巫猫</span>
-                   </div>
-               </div>
+            <div class="gallery-viewport" id="gallery-viewport">
+                <div class="gallery-grid" id="gallery-grid">
+                    <figure class="gallery-item">
+                        <img src="images/game-paluworld1.webp" alt="和暗巫猫" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='images/game-paluworld1.png';">
+                        <figcaption>和暗巫猫</figcaption>
+                    </figure>
 
-               <div class="album-item">
-                <img src="images/life1.png" alt="潮汕牛肉自助20260206">
-                <div class="album-info">
-                    <span>和朋友吃的潮汕牛肉自助</span>
-                </div>
-               </div>
+                    <figure class="gallery-item">
+                        <img src="images/life1.png" alt="和朋友吃的潮汕牛肉自助" loading="lazy" decoding="async">
+                        <figcaption>和朋友吃的潮汕牛肉自助</figcaption>
+                    </figure>
 
-               <div class="album-item">
-                <img src="images/pic1.png" alt="x画师">
-                <div class="album-info">
-                    <span>❤️</span>
-                </div>
-               </div>
+                    <figure class="gallery-item">
+                        <img src="images/pic1.png" alt="喜欢的插画" loading="lazy" decoding="async">
+                        <figcaption>❤️</figcaption>
+                    </figure>
 
-               <div class="album-item">
-                <img src="images/pic2.png" alt="peipei">
-                <div class="album-info">
-                    <span>佩佩生贺</span>
-                </div>
-               </div>
+                    <figure class="gallery-item">
+                        <img src="images/pic2.png" alt="佩佩生贺" loading="lazy" decoding="async">
+                        <figcaption>佩佩生贺</figcaption>
+                    </figure>
 
-               <div class="album-item">
-                <img src="images/安堂.png" alt="antang">
-                <div class="album-info">
-                    <span>安堂</span>
-               </div>
-            </div>
+                    <figure class="gallery-item">
+                        <img src="images/安堂.png" alt="安堂" loading="lazy" decoding="async">
+                        <figcaption>安堂</figcaption>
+                    </figure>
 
-            <div class="album-item">
-                <img src="images/随便拍拍.png" alt="dafengshan">
-                <div class="album-info">
-                    <span>神秘风扇</span>
-                </div>
-            </div>
+                    <figure class="gallery-item">
+                        <img src="images/随便拍拍.png" alt="神秘风扇" loading="lazy" decoding="async">
+                        <figcaption>神秘风扇</figcaption>
+                    </figure>
 
-            <div class="album-item">
-                <img src="images/插图1.png" alt="chahua">
-                <div class="album-info">
-                    <span>requester</span>
-             </div>
-             </div>
+                    <figure class="gallery-item">
+                        <img src="images/插图1.png" alt="requester" loading="lazy" decoding="async">
+                        <figcaption>requester</figcaption>
+                    </figure>
 
-            <div class="album-item">
-                <img src="images/洛茜宝贝.png" alt="mama">
-                <div class="album-info">
-                    <span>洛茜</span>
+                    <figure class="gallery-item">
+                        <img src="images/洛茜宝贝.png" alt="洛茜" loading="lazy" decoding="async">
+                        <figcaption>洛茜</figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <img src="images/追猎13连打1.png" alt="N15 追猎 13 连打" loading="lazy" decoding="async">
+                        <figcaption>N15追猎13连打</figcaption>
+                    </figure>
+
+                    <figure class="gallery-item">
+                        <img src="images/食其家.png" alt="食其家" loading="lazy" decoding="async">
+                        <figcaption>食其家</figcaption>
+                    </figure>
                 </div>
             </div>
+
+
+
+
+
+
+
             
-            <div class="album-item">
-                <img src="images/追猎13连打1.png" alt="jipi">
-                <div class="album-info">
-                    <span>N15追猎13连打</span>
-                </div>
-            </div>
 
 
 
 
 
                
-            </div>
         </div>
 
         <div id="page-favorite" class="page-content">
             <h2 style="margin-top:0;">⭐ 兴趣收藏与安利</h2>
-            <p style="color: var(--text-sub);">安利一些自己喜欢的轻小说、神作 Galgame、漫画或音乐。</p>
+            <p style="color: var(--text-sub);">安利一些自己喜欢的轻小说、神作 Galgame、漫画或音乐，目前共 <span id="fav-count">14</span> 本私藏。</p>
             
-            <!-- 修复1: 添加 align-items: flex-start 强制顶部对齐，使轻小说与漫画等高起点，下方自然留白 -->
-            <div class="sections-container" style="margin-top: 20px; align-items: flex-start;">
-                <div class="section-box">
-                    <strong>漫画推荐</strong>
-                    <p style="font-size:13px; color: var(--text-sub);margin: 5px 0 15px 0;">简单推荐</p>
+            <div class="sections-container fav-cards">
+                <div class="section-box" style="--accent: #ff8a3d;">
+                    <div class="box-head">
+                        <span class="box-icon">🎨</span>
+                        <span class="box-title">漫画推荐</span>
+                    </div>
+                    <p class="fav-sub">简单推荐 · 8 本</p>
 
                     <div class="book-list">
                         <div class="book-item">
-                            <span>1. 勇者再次启程</span>
-                            <button class="view-detail-btn" data-title="《勇者再次启程》" data-cover="images/comic1.png" data-review="观感不错的轮回系，作者经常会埋伏伏笔和很精彩的转折，画风不错，人物好看">查看感受 ➔</button>
+                            <span class="book-index">01</span>
+                            <img class="book-cover" src="images/comic1.png" alt="《勇者再次启程》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">勇者再次启程</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《勇者再次启程》" data-cover="images/comic1.png" data-rating="5" data-tags="轮回,王道" data-review="观感不错的轮回系，作者经常会埋伏伏笔和很精彩的转折，画风不错，人物好看">查看感受</button>
                         </div>
                         
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>2. 午夜心旋律</span>
-                            <button class="view-detail-btn" data-title="《午夜心旋律》" data-cover="images/comic2.png" data-review="《川柳少女》作者，读起来可能有点幽默成分在。党争，画风很不错，人物很好看，印象最深的是男主，超人般的行动力和情商。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">02</span>
+                            <img class="book-cover" src="images/comic2.png" alt="《午夜心旋律》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">午夜心旋律</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《午夜心旋律》" data-cover="images/comic2.png" data-rating="5" data-tags="党争,校园恋爱" data-review="《川柳少女》作者，读起来可能有点幽默成分在。党争，画风很不错，人物很好看，印象最深的是男主，超人般的行动力和情商。">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>3. 19。</span>
-                            <button class="view-detail-btn" data-title="《19.》" data-cover="images/comic3.png" data-review="即将长大的少男少女面对青春人际关系与情感又会有怎样的思考，画风好看，有些情节的细节上差些火候，但是是值得一看的佳作。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">03</span>
+                            <img class="book-cover" src="images/comic3.png" alt="《19.》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">19。</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《19.》" data-cover="images/comic3.png" data-rating="4.5" data-tags="校园日常,个人成长,青春期" data-review="即将长大的少男少女面对青春人际关系与情感又会有怎样的思考，画风好看，有些情节的细节上差些火候，但是是值得一看的佳作。">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>4. 离巢的魔王城</span>
-                            <button class="view-detail-btn" data-title="《离巢的魔王城》" data-cover="images/comic4.png" data-review="群像类轻幽默喜剧，魔王和勇者一起经营主角的店铺。画风好看，观感很好。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">04</span>
+                            <img class="book-cover" src="images/comic4.png" alt="《离巢的魔王城》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">离巢的魔王城</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《离巢的魔王城》" data-cover="images/comic4.png" data-rating="4" data-tags="异世界,休闲,幽默" data-review="群像类轻幽默喜剧，魔王和勇者一起经营主角的店铺。画风好看，观感很好。">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>5. 保知矢同学绰绰有余</span>
-                            <button class="view-detail-btn" data-title="《保知矢同学绰绰有余》" data-cover="images/comic5.png" data-review="校园恋爱漫，但不是工业糖精。二人的互动很有趣，吃货小胖妹可爱捏">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">05</span>
+                            <img class="book-cover" src="images/comic5.png" alt="《保知矢同学绰绰有余》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">保知矢同学绰绰有余</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《保知矢同学绰绰有余》" data-cover="images/comic5.png" data-rating="3.5" data-tags="校园恋爱,校园日常" data-review="校园恋爱漫，但不是工业糖精。二人的互动很有趣，吃货小胖妹可爱捏">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>6. 黄金侠</span>
-                            <button class="view-detail-btn" data-title="《黄金侠》" data-cover="images/comic6.png" data-review="有点特摄风格的漫画，剧情蛮有趣的，画风不错。但是依旧主角失忆（">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">06</span>
+                            <img class="book-cover" src="images/comic6.png" alt="《黄金侠》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">黄金侠</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《黄金侠》" data-cover="images/comic6.png" data-rating="4" data-tags="特摄,战斗" data-review="有点特摄风格的漫画，剧情蛮有趣的，画风不错。但是依旧主角失忆（">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>7. 阿伦马克</span>
-                            <button class="view-detail-btn" data-title="《阿伦马克》" data-cover="images/comic7.png" data-review="正统魔法冒险主题，以一名曾是佣兵的少年视角展开全新的生活。剧情精彩，优秀。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">07</span>
+                            <img class="book-cover" src="images/comic7.png" alt="《阿伦马克》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">阿伦马克</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《阿伦马克》" data-cover="images/comic7.png" data-rating="4" data-tags="叙事风,个人成长" data-review="正统魔法冒险主题，以一名曾是佣兵的少年视角展开全新的生活。剧情精彩，优秀。">查看感受</button>
                         </div>
                         
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>8. 魔男伊奇</span>
-                            <button class="view-detail-btn" data-title="《魔男伊奇》" data-cover="images/comic8.png" data-review="有魔女怎么没有魔男？奇幻魔法冒险主题，很强的作画+原作组合。值得一看。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">08</span>
+                            <img class="book-cover" src="images/comic8.png" alt="《魔男伊奇》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">魔男伊奇</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《魔男伊奇》" data-cover="images/comic8.png" data-rating="4" data-tags="奇幻,王道" data-review="有魔女怎么没有魔男？奇幻魔法冒险主题，很强的作画+原作组合。值得一看。">查看感受</button>
                         </div>
                     </div>
                 </div> 
 
-                <div class="section-box">
-                    <strong>轻小说推荐</strong>
-                    <p style="font-size:13px; color: var(--text-sub);margin: 5px 0 15px 0;">私藏书单</p>
+                <div class="section-box" style="--accent: #b06cff;">
+                    <div class="box-head">
+                        <span class="box-icon">📖</span>
+                        <span class="box-title">轻小说推荐</span>
+                    </div>
+                    <p class="fav-sub">私藏书单 · 6 本</p>
                     <div class="book-list">
                         <div class="book-item">
-                            <span>1. 放学后，到异世界咖啡店喝杯咖啡</span>
-                            <button class="view-detail-btn" data-title="《放学后，到异世界咖啡店喝杯咖啡》" data-cover="images/lightnovel1.png" data-review="神作。温暖的故事可以融化异乡人心中的不安，与世界建立联系，认识不同的人，就已经是存在的证明。值得阅读。">查看感受 ➔</button>
+                            <span class="book-index">01</span>
+                            <img class="book-cover" src="images/lightnovel1.png" alt="《放学后，到异世界咖啡店喝杯咖啡》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">放学后，到异世界咖啡店喝杯咖啡</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《放学后，到异世界咖啡店喝杯咖啡》" data-cover="images/lightnovel1.png" data-rating="5" data-tags="休闲治愈,异世界" data-review="神作。温暖的故事可以融化异乡人心中的不安，与世界建立联系，认识不同的人，就已经是存在的证明。值得阅读。">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>2. 你的解谜由我作答</span>
-                            <button class="view-detail-btn" data-title="《你的解谜由我作答》" data-cover="images/lightnovel2.png" data-review="轻推理。第二卷的解密很精彩，算是很出色的校园推理典范了。缺点就是毕竟是轻小说，带一点宅味，可以接受的话观感应该不错。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">02</span>
+                            <img class="book-cover" src="images/lightnovel2.png" alt="《你的解谜由我作答》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">你的解谜由我作答</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《你的解谜由我作答》" data-cover="images/lightnovel2.png" data-rating="4" data-tags="校园推理,恋爱" data-review="轻推理。第二卷的解密很精彩，算是很出色的校园推理典范了。缺点就是毕竟是轻小说，带一点宅味，可以接受的话观感应该不错。">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>3. 德尔塔与伽马的理学部笔记</span>
-                            <button class="view-detail-btn" data-title="《德尔塔与伽马的理学部笔记》" data-cover="images/lightnovel3.png" data-review="2026轻厉第6，个人最近最喜欢的纯爱向小说。本书中作者喜欢穿插一点理科的推理元素在故事中（毕竟叫理学部）。第三卷的解密很有趣，有一点推理小说的意思，同时在结尾将故事从头到尾串联起来，回收伏笔。更有意思的点在于作者一上来还安排了诡叙的设计，也许会让刚读完前作的读者感到不解，但只要读到结尾就知道作者所传达的真正意思了。个人强推，第四卷将于10.9发售">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">03</span>
+                            <img class="book-cover" src="images/lightnovel3.png" alt="《德尔塔与伽马的理学部笔记》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">德尔塔与伽马的理学部笔记</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《德尔塔与伽马的理学部笔记》" data-cover="images/lightnovel3.png" data-rating="5" data-tags="校园恋爱,解密,科学" data-review="2026轻厉第6，个人最近最喜欢的纯爱向小说。本书中作者喜欢穿插一点理科的推理元素在故事中（毕竟叫理学部）。第三卷的解密很有趣，有一点推理小说的意思，同时在结尾将故事从头到尾串联起来，回收伏笔。更有意思的点在于作者一上来还安排了诡叙的设计，也许会让刚读完前作的读者感到不解，但只要读到结尾就知道作者所传达的真正意思了。个人强推，第四卷将于10.9发售">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>4.格林链接</span>
-                            <button class="view-detail-btn " data-title="《格林链接》" data-cover="images/lightnovel4.png" data-review="将格林童话融入异世界，轮回的元素。主角与牧羊人达成约定，只有通关七个童话世界才能救治好自己的妹妹。本作带有一点点黑深残要素，第一卷观感不错，目前作者已更新至长发公主篇（中）。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">04</span>
+                            <img class="book-cover" src="images/lightnovel4.png" alt="《格林链接》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">格林链接</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《格林链接》" data-cover="images/lightnovel4.png" data-rating="3" data-tags="暗黑童话,黑深残" data-review="将格林童话融入异世界，轮回的元素。主角与牧羊人达成约定，只有通关七个童话世界才能救治好自己的妹妹。本作带有一点点黑深残要素，第一卷观感不错，目前作者已更新至长发公主篇（中）。">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>5.玩乐关系</span>
-                            <button class="view-detail-btn" data-title="《玩乐关系》" data-cover="images/lightnovel5.png" data-review="2026轻厉第一，电玩咖作者新作‘桌游咖’。在第一卷作者就在人物上做了小设计，让读者在最后才理解故事的全貌，采用倒叙展开故事情节。党争恋爱向，但读起来又有一点推理小说的感觉说是，强推。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">05</span>
+                            <img class="book-cover" src="images/lightnovel5.png" alt="《玩乐关系》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">玩乐关系</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《玩乐关系》" data-cover="images/lightnovel5.png" data-rating="4" data-tags="校园恋爱,党争" data-review="2026轻厉第一，电玩咖作者新作‘桌游咖’。在第一卷作者就在人物上做了小设计，让读者在最后才理解故事的全貌，采用倒叙展开故事情节。党争恋爱向，但读起来又有一点推理小说的感觉说是，强推。">查看感受</button>
                         </div>
 
-                        <div class="book-item" style="margin-top: 10px;">
-                            <span>6.对你保密的七角计划</span>
-                            <button class="view-detail-btn" data-title="《对你保密的七角计划》" data-cover="images/lightnovel6.png" data-review="‘恋爱是错误啊’，有三角四角恋，那有没有七角恋。本作主人公天宫司为了达成某个目的制作了对某人保密的七角恋计划。作者通过分别书写每对箭头间情节的同时留有空白，在最后计划收尾的时候全部串联起来，构成了七角关系。蛮有趣的恋爱物语。">查看感受 ➔</button>
+                        <div class="book-item">
+                            <span class="book-index">06</span>
+                            <img class="book-cover" src="images/lightnovel6.png" alt="《对你保密的七角计划》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">对你保密的七角计划</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《对你保密的七角计划》" data-cover="images/lightnovel6.png" data-rating="3.5" data-tags="校园恋爱,七角恋" data-review="‘恋爱是错误啊’，有三角四角恋，那有没有七角恋。本作主人公天宫司为了达成某个目的制作了对某人保密的七角恋计划。作者通过分别书写每对箭头间情节的同时留有空白，在最后计划收尾的时候全部串联起来，构成了七角关系。蛮有趣的恋爱物语。">查看感受</button>
                         </div>
                     </div> 
                 </div> 
@@ -810,6 +1629,152 @@
                 </script>
             </div>
         </div>
+
+        <div id="page-contact" class="page-content">
+            <h2 style="margin-top: 0;">📞 与我联系或交流</h2>
+            <p style="color: var(--text-sub);">欢迎通过以下方式与各位进行交流学习</p>
+
+            <div class="contact-page-box">
+                <a class="contact-item" href="mailto:chenghao@mails.neu.edu.cn">
+                    <span class="contact-item-icon">
+                        <svg class="icon-line" viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="2.5" y="5" width="19" height="14" rx="2.5"></rect>
+                            <path d="m3.6 6.6 8.4 5.9 8.4-5.9"></path>
+                        </svg>
+                    </span>
+                    <span class="contact-item-label">Email</span>
+                    <span class="contact-item-hint">chenghao@mails.neu.edu.cn</span>
+                </a>
+
+                <a class="contact-item" href="https://github.com/ch20070319-glitch" target="_blank" rel="noopener noreferrer">
+                    <span class="contact-item-icon">
+                        <svg class="icon-brand" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                        </svg>
+                    </span>
+                    <span class="contact-item-label">GitHub</span>
+                    <span class="contact-item-hint">ch20070319-glitch</span>
+                </a>
+
+                <a class="contact-item" href="https://wpa.qq.com/msgrd?v=3&amp;uin=646467654&amp;site=qq&amp;menu=yes" target="_blank" rel="noopener noreferrer">
+                    <span class="contact-item-icon">
+                        <svg class="icon-brand" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21.395 15.035a40 40 0 0 0-.803-2.264l-1.079-2.695c.001-.032.014-.562.014-.836C19.526 4.632 17.351 0 12 0S4.474 4.632 4.474 9.241c0 .274.013.804.014.836l-1.08 2.695a39 39 0 0 0-.802 2.264c-1.021 3.283-.69 4.643-.438 4.673.54.065 2.103-2.472 2.103-2.472 0 1.469.756 3.387 2.394 4.771-.612.188-1.363.479-1.845.835-.434.32-.379.646-.301.778.343.578 5.883.369 7.482.189 1.6.18 7.14.389 7.483-.189.078-.132.132-.458-.301-.778-.483-.356-1.233-.646-1.846-.836 1.637-1.384 2.393-3.302 2.393-4.771 0 0 1.563 2.537 2.103 2.472.251-.03.581-1.39-.438-4.673"></path>
+                        </svg>
+                    </span>
+                    <span class="contact-item-label">QQ</span>
+                    <span class="contact-item-hint">646467654</span>
+                </a>
+            </div>
+        </div>
+
+        <div id="page-fgame" class="page-content">
+            <h2 style="margin-top: 0;">🎮 fgame</h2>
+            <p style="color: var(--text-sub);">我的游戏角落，之后会陆续放一些游戏相关的内容。</p>
+
+            <!-- Steam 主页链接 -->
+            <div class="steam-box">
+                <span class="steam-icon" aria-hidden="true">
+                    <svg class="icon-brand" viewBox="0 0 24 24">
+                        <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"></path>
+                    </svg>
+                </span>
+                <div class="steam-meta">
+                    <span class="steam-title">Steam</span>
+                    <span class="steam-sub">我的游戏库、成就和好友都在这里</span>
+                </div>
+                <a class="steam-btn" href="https://steamcommunity.com/id/ch20070319/" target="_blank" rel="noopener noreferrer">前往主页 →</a>
+            </div>
+
+            <div class="sections-container fav-cards">
+                <div class="section-box" style="--accent: #b06cff;">
+                    <div class="box-head">
+                        <span class="box-icon">🕹️</span>
+                        <span class="box-title">游戏推荐</span>
+                    </div>
+                    <p class="fav-sub">我玩过并且想安利的游戏 · <span id="game-count">0</span> 款</p>
+
+                    <div class="book-list" id="game-list">
+                        <!-- 想加一款游戏，照这个格式复制一条即可（封面可选，data-rating / data-tags 可留空）
+                        <div class="book-item no-cover">
+                            <span class="book-index">01</span>
+                            <div class="book-meta">
+                                <span class="book-title">游戏名</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《游戏名》" data-cover="" data-rating="4.5" data-tags="Roguelike,卡牌" data-review="推荐理由……">查看感受</button>
+                        </div>
+                        -->
+                        <div class="book-item">
+                            <span class="book-index">01</span>
+                            <img class="book-cover" src="images/games/slay-the-spire.jpg" alt="《杀戮尖塔》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">杀戮尖塔</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《杀戮尖塔》" data-cover="images/games/slay-the-spire.jpg" data-rating="5" data-tags="Roguelike,卡牌" data-review="">查看感受</button>
+                        </div>
+                        <div class="book-item no-cover">
+                            <span class="book-index">02</span>
+                            <div class="book-meta">
+                                <span class="book-title">星之侵略者</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《星之侵略者》" data-cover="" data-rating="4" data-tags="Roguelike,卡牌" data-review="美术玩法都在线的肉鸽游戏，利用卡牌的效果在矩阵上移动或攻击敌人和你自己。缺点是开局的卡牌选择影响较大，难度较少。同公司同世界观作品《骰之侵略者》也不错。">查看感受</button>
+                        </div>
+                        <div class="book-item">
+                            <span class="book-index">03</span>
+                            <img class="book-cover" src="images/games/palworld.jpg" alt="《幻兽帕鲁》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">幻兽帕鲁</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《幻兽帕鲁》" data-cover="images/games/palworld.jpg" data-rating="4.5" data-tags="休闲,生存,捉宠,建造" data-review="方舟+宝可梦，满足了小时候抓精灵游戏的愿望，花丽娜可爱捏">查看感受</button>
+                        </div>
+                        <div class="book-item">
+                            <span class="book-index">04</span>
+                            <img class="book-cover" src="images/games/popucom.jpg" alt="《泡姆泡姆》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">泡姆泡姆</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《泡姆泡姆》" data-cover="images/games/popucom.jpg" data-rating="4" data-tags="解密闯关" data-review="鹰角出品的多人合作游戏，灵感来自消消乐游戏祖玛，三消以及各种道具让解密过程有了别样的乐趣。">查看感受</button>
+                        </div>
+                        <div class="book-item">
+                            <span class="book-index">05</span>
+                            <img class="book-cover" src="images/games/portal-2.jpg" alt="《传送门2》封面" loading="lazy" decoding="async">
+                            <div class="book-meta">
+                                <span class="book-title">传送门2</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《传送门2》" data-cover="images/games/portal-2.jpg" data-rating="5" data-tags="解密闯关,剧情" data-review="传送门和机关间的联动让这款游戏的解谜过程独具本家的特色，个人关卡的剧情也相当不错，值得游玩的神作。">查看感受</button>
+                        </div>
+                        <div class="book-item no-cover">
+                            <span class="book-index">06</span>
+                            <div class="book-meta">
+                                <span class="book-title">花园战争2</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《花园战争2》" data-cover="" data-rating="3.5" data-tags="FPS,PVZ" data-review="射击游戏续作，单论游戏本身其实还不错，角色的设计很超前（1代的时间比OW还早，属于是很优秀的玩法和角色设计），但是EA和挂b弥补了这一点，呃呃">查看感受</button>
+                        </div>
+                        <div class="book-item no-cover">
+                            <span class="book-index">07</span>
+                            <div class="book-meta">
+                                <span class="book-title">How to fish</span>
+                                <div class="book-extra"></div>
+                            </div>
+                            <button class="view-detail-btn" data-title="《How to fish》" data-cover="" data-rating="4" data-tags="射击,钓鱼" data-review="枪械手感还不错的射击游戏，新晋练枪软件（">查看感受</button>
+                        </div>
+                        <p class="list-empty" id="game-empty">推荐清单还在整理中，之后会陆续补上～</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+        <img id="lightbox-img" alt="">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
     </div>
 
     <div id="book-modal" class="book-modal-overlay">
@@ -821,10 +1786,16 @@
                 </div>
                 <div class="book-modal-right">
                     <h3 id="modal-book-title">书名加载中...</h3>
+                    <div class="modal-extra" id="modal-book-extra"></div>
                     <div class="review-text-box">
                         <p id="modal-book-review">阅读感受加载中...</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="book-modal-nav">
+                <button id="book-prev" class="book-nav-btn" type="button">‹ 上一本</button>
+                <button id="book-next" class="book-nav-btn" type="button">下一本 ›</button>
             </div>
         </div>
     </div>
@@ -880,6 +1851,265 @@
         }
         updateProgress();
         setInterval(updateProgress, 3600000);
+
+        // ⌨️ 首页打字机效果
+        (function initTypewriter() {
+            const el = document.getElementById('typewriter');
+            if (!el) return;
+
+            const phrases = (el.dataset.phrases || el.textContent || '')
+                .split('|')
+                .map(function (s) { return s.trim(); })
+                .filter(Boolean);
+            if (phrases.length === 0) return;
+
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                el.textContent = phrases[0];
+                return;
+            }
+
+            const TYPE_SPEED = 120;
+            const DELETE_SPEED = 60;
+            const HOLD_TIME = 1800;
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let deleting = false;
+
+            el.textContent = '';
+
+            function tick() {
+                const current = phrases[phraseIndex];
+
+                if (!deleting) {
+                    charIndex++;
+                    el.textContent = current.slice(0, charIndex);
+                    if (charIndex >= current.length) {
+                        deleting = true;
+                        setTimeout(tick, HOLD_TIME);
+                        return;
+                    }
+                    setTimeout(tick, TYPE_SPEED);
+                } else {
+                    charIndex--;
+                    el.textContent = current.slice(0, charIndex);
+                    if (charIndex <= 0) {
+                        deleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                        setTimeout(tick, TYPE_SPEED * 2);
+                        return;
+                    }
+                    setTimeout(tick, DELETE_SPEED);
+                }
+            }
+
+            setTimeout(tick, 600);
+        })();
+
+        // 💎 卡片光斑跟随鼠标
+        (function initCardGlow() {
+            const cards = document.querySelectorAll('.home-cards > .section-box');
+            if (!cards.length || !window.matchMedia) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            if (!window.matchMedia('(hover: hover)').matches) return;
+
+            cards.forEach(function (card) {
+                let raf = 0;
+
+                card.addEventListener('pointermove', function (event) {
+                    if (raf) return;
+                    raf = requestAnimationFrame(function () {
+                        raf = 0;
+                        const rect = card.getBoundingClientRect();
+                        card.style.setProperty('--mx', (event.clientX - rect.left) + 'px');
+                        card.style.setProperty('--my', (event.clientY - rect.top) + 'px');
+                    });
+                });
+
+                card.addEventListener('pointerleave', function () {
+                    card.style.setProperty('--mx', '50%');
+                    card.style.setProperty('--my', '0%');
+                });
+            });
+        })();
+
+        // 🖼️ 背景轮播：每隔几秒缓慢交叉淡入到下一张
+        (function initBackgroundSlideshow() {
+            // 想换背景，把图片放进网站目录，然后改这里的文件名即可
+            const BACKGROUNDS = [
+                'images/42.png',
+                'images/可露希尔.png',
+                'images/凛.png',
+                'background.png'
+            ];
+            const INTERVAL = 6000; // 每张停留时间（毫秒）
+
+            const layers = [
+                document.getElementById('bg-layer-a'),
+                document.getElementById('bg-layer-b')
+            ];
+            if (layers.some(function (layer) { return !layer; }) || BACKGROUNDS.length < 2) return;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            document.body.classList.add('bg-ready');
+
+            // 预加载，避免切换瞬间空白
+            BACKGROUNDS.forEach(function (src) {
+                const img = new Image();
+                img.src = src;
+            });
+
+            let index = 0;
+            layers[0].style.backgroundImage = 'url("' + BACKGROUNDS[0] + '")';
+            layers[0].classList.add('active');
+
+            setInterval(function () {
+                index = (index + 1) % BACKGROUNDS.length;
+                const nextLayer = layers[index % 2];
+                const prevLayer = layers[(index + 1) % 2];
+
+                nextLayer.style.backgroundImage = 'url("' + BACKGROUNDS[index] + '")';
+                nextLayer.classList.add('active');
+                prevLayer.classList.remove('active');
+            }, INTERVAL);
+        })();
+
+        // 🕰️ 侧边栏：时间 / 日期 / 天气
+        (function initSidebarInfo() {
+            const timeEl = document.getElementById('info-time');
+            const dateEl = document.getElementById('info-date');
+            const weatherEl = document.getElementById('info-weather');
+            if (!timeEl || !dateEl || !weatherEl) return;
+
+            const WEEKDAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+            // 天气城市：想换城市就改这里的名字和经纬度（可用高德/百度地图查坐标）
+            const PLACE = { name: '沈阳', latitude: 41.8057, longitude: 123.4315 };
+
+            function updateClock() {
+                const now = new Date();
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                const ss = String(now.getSeconds()).padStart(2, '0');
+                timeEl.textContent = hh + ':' + mm + ':' + ss;
+                dateEl.textContent = now.getFullYear() + ' 年 ' + (now.getMonth() + 1) + ' 月 ' +
+                    now.getDate() + ' 日 · ' + WEEKDAYS[now.getDay()];
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // WMO 天气代码 -> 中文描述
+            const WEATHER_TEXT = {
+                0: '☀️ 晴', 1: '🌤️ 晴间多云', 2: '⛅ 多云', 3: '☁️ 阴',
+                45: '🌫️ 有雾', 48: '🌫️ 雾凇',
+                51: '🌦️ 小毛毛雨', 53: '🌦️ 毛毛雨', 55: '🌧️ 浓毛毛雨',
+                56: '🌧️ 冻毛毛雨', 57: '🌧️ 浓冻毛毛雨',
+                61: '🌦️ 小雨', 63: '🌧️ 中雨', 65: '🌧️ 大雨',
+                66: '🌧️ 冻雨', 67: '🌧️ 强冻雨',
+                71: '🌨️ 小雪', 73: '🌨️ 中雪', 75: '❄️ 大雪', 77: '🌨️ 雪粒',
+                80: '🌦️ 阵雨', 81: '🌧️ 强阵雨', 82: '⛈️ 暴雨',
+                85: '🌨️ 阵雪', 86: '❄️ 强阵雪',
+                95: '⛈️ 雷阵雨', 96: '⛈️ 雷阵雨伴冰雹', 99: '⛈️ 强雷暴'
+            };
+
+            function loadWeather() {
+                const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + PLACE.latitude +
+                    '&longitude=' + PLACE.longitude +
+                    '&current=temperature_2m,weather_code&timezone=Asia%2FShanghai';
+
+                fetch(url)
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        const current = data && data.current;
+                        if (!current) throw new Error('no data');
+                        const desc = WEATHER_TEXT[current.weather_code] || '🌡️ 天气未知';
+                        weatherEl.textContent = PLACE.name + ' · ' + desc + ' ' + Math.round(current.temperature_2m) + '°C';
+                    })
+                    .catch(function () {
+                        weatherEl.textContent = PLACE.name + ' · 天气获取失败';
+                    });
+            }
+
+            loadWeather();
+            setInterval(loadWeather, 1800000); // 每 30 分钟刷新一次
+        })();
+
+        // 🖼️ 相册：随机拼贴布局（每次刷新重新随机，缩放时只做收敛）
+        (function initGallery() {
+            const grid = document.getElementById('gallery-grid');
+            if (!grid) return;
+
+            const items = Array.prototype.slice.call(grid.querySelectorAll('.gallery-item'));
+            if (!items.length) return;
+
+            function randomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function columnCount() {
+                return getComputedStyle(grid).gridTemplateColumns
+                    .split(' ')
+                    .filter(function (value) { return value.trim(); })
+                    .length;
+            }
+
+            items.forEach(function (item) {
+                item.dataset.col = randomInt(2, 4);
+                item.dataset.row = randomInt(2, 4);
+                item.style.setProperty('--tilt', (Math.random() * 4 - 2).toFixed(2) + 'deg');
+                item.style.setProperty('--shift', randomInt(-10, 10) + 'px');
+            });
+
+            function render() {
+                const cols = Math.max(1, columnCount());
+                items.forEach(function (item) {
+                    const colSpan = Math.max(1, Math.min(Number(item.dataset.col) || 2, cols));
+                    const rowSpan = Math.max(2, Math.min(Number(item.dataset.row) || 3, 5));
+                    item.style.gridColumn = 'span ' + colSpan;
+                    item.style.gridRow = 'span ' + rowSpan;
+                });
+            }
+
+            render();
+
+            let resizeTimer = 0;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(render, 150);
+            });
+        })();
+
+        // 🔍 相册灯箱：点击图片放大查看
+        (function initLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCaption = document.getElementById('lightbox-caption');
+            const grid = document.getElementById('gallery-grid');
+            if (!lightbox || !lightboxImg || !lightboxCaption || !grid) return;
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                lightbox.setAttribute('aria-hidden', 'true');
+            }
+
+            grid.addEventListener('click', function (event) {
+                const figure = event.target.closest ? event.target.closest('.gallery-item') : null;
+                if (!figure) return;
+                const img = figure.querySelector('img');
+                if (!img) return;
+                const caption = figure.querySelector('figcaption');
+
+                lightboxImg.src = img.currentSrc || img.src;
+                lightboxImg.alt = img.alt || '';
+                lightboxCaption.textContent = caption ? caption.textContent : '';
+                lightbox.classList.add('active');
+                lightbox.setAttribute('aria-hidden', 'false');
+            });
+
+            lightbox.addEventListener('click', closeLightbox);
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') closeLightbox();
+            });
+        })();
 
         // 🌓 黑暗模式控制逻辑
         const toggleBtn = document.getElementById('dark-mode-toggle');
@@ -953,41 +2183,168 @@
                         page.classList.add('active');
                     }
                 });
+
+                // 个性签名只在首页显示
+                const signatureCard = document.querySelector('.signature-card');
+                if (signatureCard) {
+                    signatureCard.classList.toggle('is-hidden', targetPageId !== 'page-home');
+                }
+
                 closeSidebar();
             });
         });
 
         // 📚 书籍详情弹窗控制
+        function starsFor(rating) {
+            const value = Math.max(0, Math.min(5, Number(rating) || 0));
+            if (!value) return '';
+            const full = Math.floor(value);
+            const half = value - full >= 0.5;
+            return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(Math.max(0, 5 - full - (half ? 1 : 0)));
+        }
+
+        function readBookMeta(button) {
+            const rating = Number(button.dataset.rating || 0);
+            const tags = (button.dataset.tags || '')
+                .split(/[,，]/)
+                .map(function (tag) { return tag.trim(); })
+                .filter(Boolean);
+            return { rating: rating, tags: tags };
+        }
+
+        function fillExtra(container, button) {
+            const meta = readBookMeta(button);
+            container.innerHTML = '';
+
+            if (meta.rating > 0) {
+                const starsEl = document.createElement('span');
+                starsEl.className = 'rating-stars';
+                starsEl.textContent = starsFor(meta.rating);
+                container.appendChild(starsEl);
+
+                const valueEl = document.createElement('span');
+                valueEl.className = 'rating-value';
+                valueEl.textContent = meta.rating.toFixed(1);
+                container.appendChild(valueEl);
+            }
+
+            meta.tags.forEach(function (tag) {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'book-tag';
+                tagEl.textContent = tag;
+                container.appendChild(tagEl);
+            });
+
+            container.style.display = (meta.rating > 0 || meta.tags.length) ? '' : 'none';
+        }
+
+        // ⭐ 收藏页 / 🎮 游戏页：列表里渲染评分与标签
+        (function initBookLists() {
+            const buttons = Array.prototype.slice.call(document.querySelectorAll('.view-detail-btn'));
+            if (!buttons.length) return;
+
+            buttons.forEach(function (button) {
+                const item = button.closest('.book-item');
+                const extra = item ? item.querySelector('.book-extra') : null;
+                if (extra) fillExtra(extra, button);
+            });
+
+            const favCountEl = document.getElementById('fav-count');
+            if (favCountEl) {
+                favCountEl.textContent = String(document.querySelectorAll('#page-favorite .view-detail-btn').length);
+            }
+
+            const gameList = document.getElementById('game-list');
+            if (gameList) {
+                const gameCount = gameList.querySelectorAll('.view-detail-btn').length;
+                const gameCountEl = document.getElementById('game-count');
+                if (gameCountEl) gameCountEl.textContent = String(gameCount);
+
+                const emptyEl = document.getElementById('game-empty');
+                if (emptyEl) emptyEl.style.display = gameCount ? 'none' : '';
+            }
+        })();
+
         const bookModal = document.getElementById('book-modal');
         const bookModalClose = document.getElementById('book-modal-close');
         const modalCover = document.getElementById('modal-book-cover');
         const modalTitle = document.getElementById('modal-book-title');
         const modalReview = document.getElementById('modal-book-review');
-        const viewDetailBtns = document.querySelectorAll('.view-detail-btn');
+        const modalExtra = document.getElementById('modal-book-extra');
+        const viewDetailBtns = Array.prototype.slice.call(document.querySelectorAll('.view-detail-btn'));
+        let currentGroup = [];
+        let currentBookIndex = -1;
 
-        viewDetailBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const title = btn.getAttribute('data-title');
-                const cover = btn.getAttribute('data-cover');
-                const review = btn.getAttribute('data-review');
+        function fillBookModal(button) {
+            if (!button) return;
 
-                if (!title || !cover || !review) return;
+            const title = button.getAttribute('data-title');
+            const cover = button.getAttribute('data-cover');
+            const review = button.getAttribute('data-review');
+            if (!title) return;
 
-                modalTitle.innerText = title;
+            modalTitle.innerText = title;
+
+            if (cover) {
                 modalCover.src = cover;
-                modalReview.innerText = review;
+                modalCover.style.display = '';
+            } else {
+                modalCover.removeAttribute('src');
+                modalCover.style.display = 'none';
+            }
 
-                bookModal.classList.add('active');
+            modalReview.innerText = review || '这款我还没写推荐理由，先记个名字～';
+            if (modalExtra) fillExtra(modalExtra, button);
+        }
+
+        function openBookModal(button) {
+            const list = button.closest('.book-list') || document;
+            currentGroup = Array.prototype.slice.call(list.querySelectorAll('.view-detail-btn'));
+            currentBookIndex = currentGroup.indexOf(button);
+            fillBookModal(button);
+            bookModal.classList.add('active');
+        }
+
+        viewDetailBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                openBookModal(btn);
             });
         });
 
-        bookModalClose.addEventListener('click', () => {
+        function stepBook(delta) {
+            if (currentBookIndex < 0 || !currentGroup.length) return;
+            currentBookIndex = (currentBookIndex + delta + currentGroup.length) % currentGroup.length;
+            fillBookModal(currentGroup[currentBookIndex]);
+        }
+
+        function closeBookModal() {
             bookModal.classList.remove('active');
-        });
+        }
+
+        const bookPrev = document.getElementById('book-prev');
+        const bookNext = document.getElementById('book-next');
+        if (bookPrev) {
+            bookPrev.addEventListener('click', function () {
+                stepBook(-1);
+            });
+        }
+        if (bookNext) {
+            bookNext.addEventListener('click', function () {
+                stepBook(1);
+            });
+        }
+
+        bookModalClose.addEventListener('click', closeBookModal);
 
         bookModal.addEventListener('click', (e) => {
             if (e.target === bookModal) {
-                bookModal.classList.remove('active');
+                closeBookModal();
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && bookModal.classList.contains('active')) {
+                closeBookModal();
             }
         });
     </script>
