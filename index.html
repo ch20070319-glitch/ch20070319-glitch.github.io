@@ -1130,6 +1130,13 @@
             margin-top: 40px;
             text-align: left;
         }
+        #tcomment {
+            margin-top: 6px;
+            text-align: left;
+        }
+        body.dark #tcomment {
+            color-scheme: dark;
+        }
 
         /* 修复2: 调整欢迎弹窗样式，确保其位于最高层 */
         .modal-overlay {
@@ -1628,13 +1635,7 @@
                     如果你有任何宝贵的意见或建议，欢迎在下方留言，你的反馈对我很重要！
                 </p>
                 
-                <script src="https://utteranc.es/client.js"
-                        repo="ch20070319-glitch/ch20070319-glitch.github.io"
-                        issue-term="pathname"
-                        theme="github-light"
-                        crossorigin="anonymous"
-                        async>
-                </script>
+                <div id="tcomment"></div>
             </div>
         </div>
 
@@ -1720,7 +1721,7 @@
                                 <span class="book-title">杀戮尖塔</span>
                                 <div class="book-extra"></div>
                             </div>
-                            <button class="view-detail-btn" data-title="《杀戮尖塔》" data-cover="images/games/slay-the-spire.jpg" data-rating="5" data-tags="Roguelike,卡牌" data-review="">查看感受</button>
+                            <button class="view-detail-btn" data-title="《杀戮尖塔》" data-cover="images/games/slay-the-spire.jpg" data-rating="5" data-tags="Roguelike,卡牌" data-review="请输入文本">查看感受</button>
                         </div>
                         <div class="book-item">
                             <span class="book-index">02</span>
@@ -1774,7 +1775,7 @@
                                 <span class="book-title">How to fish</span>
                                 <div class="book-extra"></div>
                             </div>
-                            <button class="view-detail-btn" data-title="《How to fish》" data-cover="images/games/How to fish.png" data-rating="4" data-tags="射击,钓鱼" data-review="枪械手感还不错的射击游戏，新晋练枪软件（">查看感受</button>
+                            <button class="view-detail-btn" data-title="《How to fish》" data-cover="images/games/How to fish.png" data-rating="4" data-tags="射击,钓鱼" data-review="枪械手感还不错的射击游戏，新晋练枪软件">查看感受</button>
                         </div>
                         <p class="list-empty" id="game-empty">推荐清单还在整理中，之后会陆续补上～</p>
                     </div>
@@ -2135,6 +2136,7 @@
         }
         
         syncPlayerTheme();
+        syncCommentTheme();
 
         toggleBtn.addEventListener('click', () => {
             body.classList.toggle('dark');
@@ -2146,7 +2148,7 @@
                 toggleBtn.innerText = '🌙';
             }
             syncPlayerTheme();    
-            syncUtterancesTheme(); 
+            syncCommentTheme(); 
         });
 
         function syncPlayerTheme() {
@@ -2154,12 +2156,37 @@
             ap.theme = body.classList.contains('dark') ? '#95a5a6' : '#333333';
         }
 
-        function syncUtterancesTheme() {
-            const iframe = document.querySelector('.utterances-frame');
-            if (!iframe) return;
-            const theme = body.classList.contains('dark') ? 'github-dark' : 'github-light';
-            iframe.contentWindow.postMessage({ type: 'set-theme', theme: theme }, 'https://utteranc.es');
+        function syncCommentTheme() {
+            // 让评论区（Twikoo）跟随站点主题：原生输入控件按主题渲染
+            document.documentElement.style.colorScheme = body.classList.contains('dark') ? 'dark' : 'light';
         }
+
+        // 💬 Twikoo 评论：第一次进入收藏页时才加载，避免拖慢首页
+        (function initTwikooComments() {
+            const TWIKOO_ENV_ID = 'https://asker-twikoo.netlify.app/.netlify/functions/twikoo';
+            const TWIKOO_CDN = 'https://registry.npmmirror.com/twikoo/1.7.22/files/dist/twikoo.min.js';
+            let loaded = false;
+
+            window.loadTwikoo = function () {
+                if (loaded) return;
+                const container = document.getElementById('tcomment');
+                if (!container) return;
+                loaded = true;
+
+                const script = document.createElement('script');
+                script.src = TWIKOO_CDN;
+                script.onload = function () {
+                    if (typeof twikoo === 'undefined') return;
+                    twikoo.init({
+                        envId: TWIKOO_ENV_ID,
+                        el: '#tcomment',
+                        lang: 'zh-CN',
+                        path: location.pathname
+                    });
+                };
+                document.body.appendChild(script);
+            };
+        })();
 
         // 侧边栏与多页面切换
         const sidebar = document.getElementById('sidebar');
@@ -2199,6 +2226,11 @@
                 const signatureCard = document.querySelector('.signature-card');
                 if (signatureCard) {
                     signatureCard.classList.toggle('is-hidden', targetPageId !== 'page-home');
+                }
+
+                // 第一次进收藏页时才加载评论区
+                if (targetPageId === 'page-favorite' && typeof window.loadTwikoo === 'function') {
+                    window.loadTwikoo();
                 }
 
                 closeSidebar();
