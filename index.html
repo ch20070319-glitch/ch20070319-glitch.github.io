@@ -118,6 +118,14 @@
         .book-item:hover .book-cover {
             transform: scale(1.06) rotate(-1deg);
         }
+        /* 横版封面（如 Steam header 图）不裁切，完整显示 */
+        .book-cover.wide {
+            object-fit: contain;
+            background: rgba(0, 0, 0, 0.06);
+        }
+        body.dark .book-cover.wide {
+            background: rgba(255, 255, 255, 0.08);
+        }
         .book-meta {
             display: flex;
             flex-direction: column;
@@ -1714,13 +1722,14 @@
                             </div>
                             <button class="view-detail-btn" data-title="《杀戮尖塔》" data-cover="images/games/slay-the-spire.jpg" data-rating="5" data-tags="Roguelike,卡牌" data-review="">查看感受</button>
                         </div>
-                        <div class="book-item no-cover">
+                        <div class="book-item">
                             <span class="book-index">02</span>
+                            <img class="book-cover wide" src="images/games/星之侵略者.png" alt="《星之侵略者》封面" loading="lazy" decoding="async">
                             <div class="book-meta">
                                 <span class="book-title">星之侵略者</span>
                                 <div class="book-extra"></div>
                             </div>
-                            <button class="view-detail-btn" data-title="《星之侵略者》" data-cover="" data-rating="4" data-tags="Roguelike,卡牌" data-review="美术玩法都在线的肉鸽游戏，利用卡牌的效果在矩阵上移动或攻击敌人和你自己。缺点是开局的卡牌选择影响较大，难度较少。同公司同世界观作品《骰之侵略者》也不错。">查看感受</button>
+                            <button class="view-detail-btn" data-title="《星之侵略者》" data-cover="images/games/星之侵略者.png" data-rating="4" data-tags="Roguelike,卡牌" data-review="美术玩法都在线的肉鸽游戏，利用卡牌的效果在矩阵上移动或攻击敌人和你自己。缺点是开局的卡牌选择影响较大，难度较少。同公司同世界观作品《骰之侵略者》也不错。">查看感受</button>
                         </div>
                         <div class="book-item">
                             <span class="book-index">03</span>
@@ -1749,21 +1758,23 @@
                             </div>
                             <button class="view-detail-btn" data-title="《传送门2》" data-cover="images/games/portal-2.jpg" data-rating="5" data-tags="解密闯关,剧情" data-review="传送门和机关间的联动让这款游戏的解谜过程独具本家的特色，个人关卡的剧情也相当不错，值得游玩的神作。">查看感受</button>
                         </div>
-                        <div class="book-item no-cover">
+                        <div class="book-item">
                             <span class="book-index">06</span>
+                            <img class="book-cover wide" src="images/games/花园战争2.png" alt="《花园战争2》封面" loading="lazy" decoding="async">
                             <div class="book-meta">
                                 <span class="book-title">花园战争2</span>
                                 <div class="book-extra"></div>
                             </div>
-                            <button class="view-detail-btn" data-title="《花园战争2》" data-cover="" data-rating="3.5" data-tags="FPS,PVZ" data-review="射击游戏续作，单论游戏本身其实还不错，角色的设计很超前（1代的时间比OW还早，属于是很优秀的玩法和角色设计），但是EA和挂b弥补了这一点，呃呃">查看感受</button>
+                            <button class="view-detail-btn" data-title="《花园战争2》" data-cover="images/games/花园战争2.png" data-rating="3.5" data-tags="FPS,PVZ" data-review="射击游戏续作，单论游戏本身其实还不错，角色的设计很超前（1代的时间比OW还早，属于是很优秀的玩法和角色设计），但是EA和挂b弥补了这一点，呃呃">查看感受</button>
                         </div>
-                        <div class="book-item no-cover">
+                        <div class="book-item">
                             <span class="book-index">07</span>
+                            <img class="book-cover wide" src="images/games/How to fish.png" alt="《How to fish》封面" loading="lazy" decoding="async">
                             <div class="book-meta">
                                 <span class="book-title">How to fish</span>
                                 <div class="book-extra"></div>
                             </div>
-                            <button class="view-detail-btn" data-title="《How to fish》" data-cover="" data-rating="4" data-tags="射击,钓鱼" data-review="枪械手感还不错的射击游戏，新晋练枪软件（">查看感受</button>
+                            <button class="view-detail-btn" data-title="《How to fish》" data-cover="images/games/How to fish.png" data-rating="4" data-tags="射击,钓鱼" data-review="枪械手感还不错的射击游戏，新晋练枪软件（">查看感受</button>
                         </div>
                         <p class="list-empty" id="game-empty">推荐清单还在整理中，之后会陆续补上～</p>
                     </div>
